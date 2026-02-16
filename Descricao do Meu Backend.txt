@@ -1,0 +1,140 @@
+//Entities (com pastas dentro para organizar)//
+
+primeiro as 8 classes sem pasta
+
+1-BaseEntity //Classe Pai//
+2-Categoria
+3-Cliente
+4-Forncedor
+5-Funcionario
+6-Ingrediente
+7-Produto
+8-Receita
+
+9-Compras (dentro da pasta compraEstoque)
+10-Item compra (dentro da pasta compraEstoque)
+11-MovimentacaoEstoque (dentro da pasta compraEstoque)
+
+12-LancamentoFinanceiro (dentro da pasta financeiro)
+
+13-AiConversa (dentro da pasta ia)
+14-AiMensagem (dentro da pasta ia)
+
+15-ItemVenda (dentro da pasta vendas)
+16-Venda (dentro da pasta vendas)
+
+tem tambem os Enums dentro da pasta Enums(CanalVendas, FormaPagamento, PapelUsuario,
+ StatusVenda, TipoFinanceiro, TipoMovimentacaoEstoque, UnidadeMedida)
+
+
+//Repositories (com pastas dentro para organizar)//
+
+2-CategoriaRepository
+3-ClienteRepository
+4-ForncedorRepository
+5-FuncionarioRepository
+6-IngredienteRepository
+7-ProdutoRepository
+8-ReceitaRepository
+
+9-ComprasRepository (dentro da pasta compraEstoqueRepository)
+10-ItemCompraRepository (dentro da pasta compraEstoqueRepository)
+11-MovimentacaoEstoqueRepository (dentro da pasta compraEstoqueRepository)
+
+12-LancamentoFinanceiroRepository (dentro da pasta financeiroRepository)
+
+13-AiConversaRepository (dentro da pasta iaRepository)
+14-AiMensagemRepository (dentro da pasta iaRepository)
+
+15-ItemVendaRepository (dentro da pasta vendasRepository)
+16-VendaRepository (dentro da pasta vendasRepository)
+
+
+//Dtos//
+
+1-CategoriaListDTO
+2-CategoriaRequestDTO
+3-CategoriaResponseDTO
+4-ProdutoDetailsDTO
+5-ProdutoListDTO
+6-ProdutoRequestDTO
+7-ProdutoResponseDTO
+
+8-ComprasRequstDTO (dentro da pasta compraEstoqueDto)
+9-ItemcompraResponseDTO (dentro da pasta compraEstoqueDto)
+10-ItemcompraRequestDTO (dentro da pasta compraEstoqueDto)
+11-CompraWithItemsDTO  (dentro da pasta compraEstoqueDto)
+
+
+12-LancamentoFinanceiroRequestDTO (dentro da pasta financeiroDto)
+13-LancamentoFinanceiroResponseDTO (dentro da pasta financeiroDto)
+14-ResumoFinanceiroDTO (dentro da pasta financeiroDto)
+
+15-AiMensagemRequestDTO (dentro da pasta iaDto)
+16-AiMensagemResponseDTO (dentro da pasta iaDto)
+
+17-ItemVendaRequestDTO (dentro da pasta vendasDto)
+18-ItemVendaResponseDTO (dentro da pasta vendasDto)
+19-VendaListDTO (dentro da pasta vendasDto)
+20-VendaDetailsDTO (dentro da pasta vendasDto)
+21-VendaRequestDTO (dentro da pasta vendasDto)
+
+21-AilnsightDTO (dentro da pasta relatorioDto)
+22-DreDataDto (dentro da pasta relatorioDto)
+23-KpiDataDTO (dentro da pasta relatorioDto)
+
+
+//Services// 
+
+1-RelatoriService(dentro da pasta relatoriService)
+
+2-CategoriaService
+3-ClienteService
+4-ForncedorService
+5-FuncionarioService
+6-IngredienteService
+7-ProdutoService
+8-ReceitaService
+
+9-ComprasService (dentro da pasta compraEstoqueService)
+10-ItemcompraService (dentro da pasta compraEstoqueService)
+11-MovimentacaoEstoqueService (dentro da pasta compraEstoqueService)
+
+12-LancamentoFinanceiroService (dentro da pasta financeiroService)
+
+13-AiConversaService (dentro da pasta iaService)
+14-AiMensagemService (dentro da pasta iaService)
+
+15-ItemVendaService (dentro da pasta vendasService)
+16-VendaService (dentro da pasta vendasService)
+
+
+//Controllers//
+
+CategoriaController
+
+ClienteController
+
+FornecedorController
+
+FuncionarioController
+
+IngredienteController
+
+ProdutoController
+
+ReceitaController
+
+VendaController
+
+CompraController
+
+MovimentacaoEstoqueController
+
+LancamentoFinanceiroController
+
+AiConversaController
+
+AiMensagemController
+
+RelatorioController
