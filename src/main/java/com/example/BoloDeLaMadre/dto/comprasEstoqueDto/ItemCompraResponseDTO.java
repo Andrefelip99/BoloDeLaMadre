@@ -13,7 +13,7 @@ public class ItemCompraResponseDTO {
     private UUID id;
     private UUID compraId;
     private UUID ingredienteId;
-    private double quantidade; // corrigido de Double para BigDecimal
+    private double quantidade; 
     private BigDecimal precoUnitario;
     private BigDecimal subtotal;
 

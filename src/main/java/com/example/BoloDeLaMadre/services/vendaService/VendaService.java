@@ -2,7 +2,6 @@ package com.example.BoloDeLaMadre.services.vendaService;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +13,7 @@ import com.example.BoloDeLaMadre.entities.Cliente;
 import com.example.BoloDeLaMadre.entities.Funcionario;
 import com.example.BoloDeLaMadre.entities.enums.StatusVenda;
 import com.example.BoloDeLaMadre.entities.vendas.Venda;
+import com.example.BoloDeLaMadre.excepions.ResourceNotFoundException;
 import com.example.BoloDeLaMadre.repositories.ClienteRepository;
 import com.example.BoloDeLaMadre.repositories.FuncionarioRepository;
 import com.example.BoloDeLaMadre.repositories.vendasRepository.VendaRepository;
@@ -24,56 +24,54 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class VendaService {
 
-    private final VendaRepository vendaRepository;
-    private final ItemVendaService itemVendaService;
+        private final VendaRepository vendaRepository;
+        private final ClienteRepository clienteRepository;
+        private final FuncionarioRepository funcionarioRepository;
 
-    private final ClienteRepository clienteRepository;
-    private final FuncionarioRepository funcionarioRepository;
+        @Transactional
+        public VendaDetailsDTO create(VendaRequestDTO dto) {
+                Cliente cliente = clienteRepository.findById(dto.getClienteId())
+                                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
 
-    @Transactional
-    public VendaDetailsDTO create(VendaRequestDTO dto) {
+                Funcionario funcionario = funcionarioRepository.findById(dto.getFuncionarioId())
+                                .orElseThrow(() -> new ResourceNotFoundException("Funcionário não encontrado"));
 
-    Cliente cliente = clienteRepository.findById(dto.getClienteId())
-            .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+                Venda venda = Venda.builder()
+                                .cliente(cliente)
+                                .funcionario(funcionario)
+                                .canal(dto.getCanal())
+                                .status(StatusVenda.PENDENTE)
+                                .desconto(dto.getDesconto())
+                                .taxaEntrega(dto.getTaxaEntrega())
+                                .formaPagamento(dto.getFormaPagamento())
+                                .build();
 
-    Funcionario funcionario = funcionarioRepository.findById(dto.getFuncionarioId())
-            .orElseThrow(() -> new RuntimeException("Funcionário não encontrado"));
+                vendaRepository.save(venda);
 
-    Venda venda = Venda.builder()
-            .cliente(cliente)
-            .funcionario(funcionario)
-            .canal(dto.getCanal())
-            .status(StatusVenda.PENDENTE)
-            .desconto(dto.getDesconto())
-            .taxaEntrega(dto.getTaxaEntrega())
-            .formaPagamento(dto.getFormaPagamento())
-            .build();
+                
+                return new VendaDetailsDTO(venda, List.of());
+        }
 
-    vendaRepository.save(venda);
+        public VendaDetailsDTO getById(UUID id) {
+                Venda venda = vendaRepository.findByIdWithDetails(id) 
+                                .orElseThrow(() -> new ResourceNotFoundException("Venda não encontrada"));
 
-    return new VendaDetailsDTO(venda, List.of());
-}
+                
+                List<ItemVendaResponseDTO> itensDTO = venda.getItens().stream()
+                                .map(ItemVendaResponseDTO::new)
+                                .toList();
 
+                return new VendaDetailsDTO(venda, itensDTO);
+        }
 
-    public VendaDetailsDTO getById(UUID id) {
-
-        Venda venda = vendaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Venda não encontrada"));
-
-        List<ItemVendaResponseDTO> itens =
-                itemVendaService.listByVenda(venda.getId());
-
-        return new VendaDetailsDTO(venda, itens);
-    }
-
-    public List<VendaDetailsDTO> listAll() {
-
-        return vendaRepository.findAll()
-                .stream()
-                .map(v -> new VendaDetailsDTO(
-                        v,
-                        itemVendaService.listByVenda(v.getId())
-                ))
-                .collect(Collectors.toList());
-    }
+        public List<VendaDetailsDTO> listAll() {
+                return vendaRepository.findAllWithDetails() 
+                                .stream()
+                                .map(v -> new VendaDetailsDTO(
+                                                v,
+                                                v.getItens().stream()
+                                                                .map(ItemVendaResponseDTO::new)
+                                                                .toList()))
+                                .toList();
+        }
 }

@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.BoloDeLaMadre.entities.Categoria;
 import com.example.BoloDeLaMadre.entities.Produto;
+import com.example.BoloDeLaMadre.excepions.BadRequestException;
+import com.example.BoloDeLaMadre.excepions.ResourceNotFoundException;
 import com.example.BoloDeLaMadre.repositories.CategoriaRepository;
 import com.example.BoloDeLaMadre.repositories.ProdutoRepository;
 
@@ -27,7 +29,7 @@ public class ProdutoService {
 
         if (categoriaId != null) {
             categoria = categoriaRepository.findById(categoriaId)
-                    .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
         }
 
         produto.setCategoria(categoria);
@@ -40,13 +42,13 @@ public class ProdutoService {
     public Produto update(UUID id, Produto data, UUID categoriaId) {
 
         Produto produto = produtoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
 
         Categoria categoria = null;
 
         if (categoriaId != null) {
             categoria = categoriaRepository.findById(categoriaId)
-                    .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
         }
 
         produto.setNome(data.getNome());
@@ -65,18 +67,21 @@ public class ProdutoService {
     @Transactional
     public void delete(UUID id) {
         Produto produto = produtoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
+
+        if (!produto.getAtivo()) {
+            throw new BadRequestException("Categoria já está inativa");
+        }
 
         produto.setAtivo(false);
         produtoRepository.save(produto);
     }
 
-    public Produto getById(UUID id) {
-        return produtoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+     public Produto getById(UUID id) {
+        return produtoRepository.findByIdWithCategoria(id);
     }
 
     public List<Produto> listAll() {
-        return produtoRepository.findAll();
+        return produtoRepository.findAllWithCategoria();
     }
 }

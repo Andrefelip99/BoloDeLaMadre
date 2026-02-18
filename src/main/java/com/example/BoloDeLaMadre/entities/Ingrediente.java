@@ -38,4 +38,6 @@ public class Ingrediente extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "fornecedor_id")
     private Fornecedor fornecedor;
+
+    
 }

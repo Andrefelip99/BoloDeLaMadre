@@ -6,8 +6,11 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.example.BoloDeLaMadre.entities.Funcionario;
+import com.example.BoloDeLaMadre.excepions.BadRequestException;
+import com.example.BoloDeLaMadre.excepions.ResourceNotFoundException;
 import com.example.BoloDeLaMadre.repositories.FuncionarioRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -23,7 +26,7 @@ public class FuncionarioService {
 
     public Funcionario update(UUID id, Funcionario data) {
         Funcionario func = funcionarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Funcionario não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Funcionario não encontrado"));
 
         func.setNome(data.getNome());
         func.setEmail(data.getEmail());
@@ -34,9 +37,14 @@ public class FuncionarioService {
         return funcionarioRepository.save(func);
     }
 
+    @Transactional
     public void delete(UUID id) {
         Funcionario func = funcionarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Funcionario não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Funcionario não encontrado"));
+
+        if (!func.getAtivo()) {
+            throw new BadRequestException("Funcionario já está inativo");
+        }
 
         func.setAtivo(false);
         funcionarioRepository.save(func);
@@ -44,10 +52,11 @@ public class FuncionarioService {
 
     public Funcionario getById(UUID id) {
         return funcionarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Funcionario não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Funcionario não encontrado"));
     }
 
     public List<Funcionario> listAll() {
         return funcionarioRepository.findAll();
     }
+
 }

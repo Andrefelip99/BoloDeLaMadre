@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import com.example.BoloDeLaMadre.entities.Produto;
 import com.example.BoloDeLaMadre.services.ProdutoService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -20,7 +21,7 @@ public class ProdutoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Produto create(@RequestBody Produto produto,
+    public Produto create(@RequestBody @Valid Produto produto,
                           @RequestParam(required = false) UUID categoriaId) {
 
         return produtoService.create(produto, categoriaId);
@@ -28,7 +29,7 @@ public class ProdutoController {
 
     @PutMapping("/{id}")
     public Produto update(@PathVariable UUID id,
-                          @RequestBody Produto produto,
+                          @RequestBody @Valid Produto produto,
                           @RequestParam(required = false) UUID categoriaId) {
 
         return produtoService.update(id, produto, categoriaId);

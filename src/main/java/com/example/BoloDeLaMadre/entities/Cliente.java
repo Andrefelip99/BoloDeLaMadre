@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -31,5 +32,9 @@ public class Cliente extends BaseEntity {
     private BigDecimal totalCompras;
     private Integer quantidadePedidos;
     private LocalDateTime ultimaCompra;
+    
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean ativo = true;
 
 }

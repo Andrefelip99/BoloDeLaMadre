@@ -10,6 +10,7 @@ import com.example.BoloDeLaMadre.dto.comprasEstoqueDto.ItemCompraRequestDTO;
 import com.example.BoloDeLaMadre.dto.comprasEstoqueDto.ItemCompraResponseDTO;
 import com.example.BoloDeLaMadre.entities.comprasEstoque.Compra;
 import com.example.BoloDeLaMadre.entities.comprasEstoque.ItemCompra;
+import com.example.BoloDeLaMadre.excepions.ResourceNotFoundException;
 import com.example.BoloDeLaMadre.entities.Ingrediente;
 import com.example.BoloDeLaMadre.repositories.comprasEstoqueRepository.ItemCompraRepository;
 import com.example.BoloDeLaMadre.repositories.comprasEstoqueRepository.CompraRepository;
@@ -28,10 +29,10 @@ public class ItemCompraService {
     public ItemCompraResponseDTO create(UUID compraId, ItemCompraRequestDTO dto) {
 
         Compra compra = compraRepository.findById(compraId)
-                .orElseThrow(() -> new RuntimeException("Compra não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Compra não encontrada"));
 
         Ingrediente ingrediente = ingredienteRepository.findById(dto.getIngredienteId())
-                .orElseThrow(() -> new RuntimeException("Ingrediente não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Ingrediente não encontrado"));
 
         ItemCompra item = new ItemCompra();
         item.setCompra(compra);

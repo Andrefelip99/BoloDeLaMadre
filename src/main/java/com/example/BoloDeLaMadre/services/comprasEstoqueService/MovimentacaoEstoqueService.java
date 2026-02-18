@@ -22,4 +22,5 @@ public class MovimentacaoEstoqueService {
     public List<MovimentacaoEstoque> listAll() {
         return movimentacaoEstoqueRepository.findAll();
     }
+    
 }

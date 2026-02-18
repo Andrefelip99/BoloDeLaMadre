@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.example.BoloDeLaMadre.dto.CategoriaRequestDTO;
 import com.example.BoloDeLaMadre.dto.CategoriaResponseDTO;
 import com.example.BoloDeLaMadre.entities.Categoria;
+import com.example.BoloDeLaMadre.excepions.BadRequestException;
+import com.example.BoloDeLaMadre.excepions.ResourceNotFoundException;
 import com.example.BoloDeLaMadre.repositories.CategoriaRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -27,7 +29,7 @@ public class CategoriaService {
 
     public CategoriaResponseDTO update(UUID id, CategoriaRequestDTO dto) {
         Categoria categoria = categoriaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
         categoria.setNome(dto.getNome());
         categoria.setDescricao(dto.getDescricao());
         categoriaRepository.save(categoria);
@@ -36,14 +38,19 @@ public class CategoriaService {
 
     public void delete(UUID id) {
         Categoria categoria = categoriaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
-        categoria.setAtivo(false); 
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
+
+        if (!categoria.getAtivo()) {
+            throw new BadRequestException("Categoria já está inativa");
+        }
+
+        categoria.setAtivo(false);
         categoriaRepository.save(categoria);
     }
 
     public CategoriaResponseDTO getById(UUID id) {
         Categoria categoria = categoriaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
         return new CategoriaResponseDTO(categoria);
     }
 

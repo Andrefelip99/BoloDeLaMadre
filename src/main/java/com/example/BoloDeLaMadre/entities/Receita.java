@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 
 import com.example.BoloDeLaMadre.entities.enums.UnidadeMedida;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -45,4 +46,9 @@ public class Receita {
 
     @Enumerated(EnumType.STRING)
     private UnidadeMedida unidade;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean ativo = true;
+
 }

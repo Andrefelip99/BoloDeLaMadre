@@ -4,7 +4,16 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.BoloDeLaMadre.entities.Funcionario;
 import com.example.BoloDeLaMadre.services.FuncionarioService;
@@ -26,23 +35,26 @@ public class FuncionarioController {
 
     @PutMapping("/{id}")
     public Funcionario update(@PathVariable UUID id,
-                              @RequestBody Funcionario funcionario) {
+            @RequestBody Funcionario funcionario) {
         return funcionarioService.update(id, funcionario);
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         funcionarioService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
-    public Funcionario getById(@PathVariable UUID id) {
-        return funcionarioService.getById(id);
+    public ResponseEntity<Funcionario> getById(@PathVariable UUID id) {
+        Funcionario func = funcionarioService.getById(id);
+        return ResponseEntity.ok(func);
     }
 
     @GetMapping
-    public List<Funcionario> listAll() {
-        return funcionarioService.listAll();
+    public ResponseEntity<List<Funcionario>> listAll() {
+        List<Funcionario> funcionarios = funcionarioService.listAll();
+        return ResponseEntity.ok(funcionarios);
     }
+
 }

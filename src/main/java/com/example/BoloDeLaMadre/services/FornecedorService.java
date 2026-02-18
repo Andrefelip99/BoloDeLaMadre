@@ -2,12 +2,11 @@ package com.example.BoloDeLaMadre.services;
 
 import java.util.List;
 import java.util.UUID;
-
 import org.springframework.stereotype.Service;
-
 import com.example.BoloDeLaMadre.entities.Fornecedor;
+import com.example.BoloDeLaMadre.excepions.BadRequestException;
+import com.example.BoloDeLaMadre.excepions.ResourceNotFoundException;
 import com.example.BoloDeLaMadre.repositories.FornecedorRepository;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -24,7 +23,7 @@ public class FornecedorService {
     public Fornecedor update(UUID id, Fornecedor dados) {
 
         Fornecedor fornecedor = fornecedorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Fornecedor não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Fornecedor não encontrado"));
 
         fornecedor.setNome(dados.getNome());
         fornecedor.setTelefone(dados.getTelefone());
@@ -38,14 +37,19 @@ public class FornecedorService {
 
     public void delete(UUID id) {
         Fornecedor fornecedor = fornecedorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Fornecedor não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Fornecedor não encontrado"));
+
+        if (!fornecedor.getAtivo()) {
+            throw new BadRequestException("Fornecedor já está inativo");
+        }
+
         fornecedor.setAtivo(false);
         fornecedorRepository.save(fornecedor);
     }
 
     public Fornecedor getById(UUID id) {
         return fornecedorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Fornecedor não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Fornecedor não encontrado"));
     }
 
     public List<Fornecedor> listAll() {

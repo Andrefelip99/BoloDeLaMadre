@@ -9,6 +9,7 @@ import com.example.BoloDeLaMadre.dto.vendasDto.ItemVendaRequestDTO;
 import com.example.BoloDeLaMadre.dto.vendasDto.ItemVendaResponseDTO;
 import com.example.BoloDeLaMadre.entities.vendas.ItemVenda;
 import com.example.BoloDeLaMadre.entities.vendas.Venda;
+import com.example.BoloDeLaMadre.excepions.ResourceNotFoundException;
 import com.example.BoloDeLaMadre.entities.Produto;
 import com.example.BoloDeLaMadre.repositories.vendasRepository.ItemVendaRepository;
 import com.example.BoloDeLaMadre.repositories.vendasRepository.VendaRepository;
@@ -27,10 +28,10 @@ public class ItemVendaService {
     public ItemVendaResponseDTO create(ItemVendaRequestDTO dto) {
 
         Venda venda = vendaRepository.findById(dto.getVendaId())
-                .orElseThrow(() -> new RuntimeException("Venda não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Venda não encontrada"));
 
         Produto produto = produtoRepository.findById(dto.getProdutoId())
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
 
         ItemVenda item = new ItemVenda();
         item.setVenda(venda);

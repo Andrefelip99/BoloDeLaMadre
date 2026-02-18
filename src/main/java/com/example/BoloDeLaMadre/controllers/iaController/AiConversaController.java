@@ -38,7 +38,8 @@ public class AiConversaController {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Conversa não encontrada"));
 
-        return aiConversaService.listMensagens(conversa);
+        return aiConversaService.listMensagens(conversa.getId());
+
     }
 
     @DeleteMapping("/{id}")

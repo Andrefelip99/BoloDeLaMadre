@@ -6,6 +6,8 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.example.BoloDeLaMadre.entities.Cliente;
+import com.example.BoloDeLaMadre.excepions.BadRequestException;
+import com.example.BoloDeLaMadre.excepions.ResourceNotFoundException;
 import com.example.BoloDeLaMadre.repositories.ClienteRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,7 @@ public class ClienteService {
     public Cliente update(UUID id, Cliente dados) {
 
         Cliente cliente = clienteRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
 
         cliente.setNome(dados.getNome());
         cliente.setTelefone(dados.getTelefone());
@@ -37,16 +39,22 @@ public class ClienteService {
 
     public void delete(UUID id) {
 
-        Cliente cliente = clienteRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+    Cliente cliente = clienteRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
 
-        clienteRepository.delete(cliente);
+    if (!cliente.getAtivo()) {
+        throw new BadRequestException("Cliente já está inativo");
     }
+
+    cliente.setAtivo(false);
+    clienteRepository.save(cliente);
+}
+
 
     public Cliente getById(UUID id) {
 
         return clienteRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
     }
 
     public List<Cliente> listAll() {

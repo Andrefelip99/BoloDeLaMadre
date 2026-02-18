@@ -111,30 +111,29 @@ tem tambem os Enums dentro da pasta Enums(CanalVendas, FormaPagamento, PapelUsua
 
 //Controllers//
 
-CategoriaController
+1-CategoriaController
+2-ClienteController
+3-FornecedorController
+4-FuncionarioController
+5-IngredienteController
+6-ProdutoController
+7-ReceitaController
 
-ClienteController
+8-VendaController (dentro da pasta vendasController)
 
-FornecedorController
+9-CompraController (dentro da pasta comprasEstoqueController)
+10-MovimentacaoEstoqueController (dentro da pasta comprasEstoqueController)
 
-FuncionarioController
+11-LancamentoFinanceiroController (dentro da pasta financeiroController)
 
-IngredienteController
+12-AiConversaController (dentro da pasta iaController)
+13AiMensagemController (dentro da pasta iaController)
 
-ProdutoController
+14-RelatorioController (dentro da pasta relatorioController)
 
-ReceitaController
 
-VendaController
+//Exceptions//
 
-CompraController
-
-MovimentacaoEstoqueController
-
-LancamentoFinanceiroController
-
-AiConversaController
-
-AiMensagemController
-
-RelatorioController
+1-ResourceNotFoundException
+2-BadRequestException
+3-GlobalExceptionHandler

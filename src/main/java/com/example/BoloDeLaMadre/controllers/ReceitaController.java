@@ -47,11 +47,11 @@ public class ReceitaController {
 
     @GetMapping("/{id}")
     public Receita getById(@PathVariable UUID id) {
-        return receitaService.getById(id);
+        return receitaService.getByIdWithProdutoAndIngrediente(id);
     }
 
     @GetMapping
     public List<Receita> listAll() {
-        return receitaService.listAll();
+        return receitaService.listAllWithProdutoAndIngrediente();
     }
 }

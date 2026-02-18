@@ -10,6 +10,7 @@ import com.example.BoloDeLaMadre.dto.CategoriaRequestDTO;
 import com.example.BoloDeLaMadre.dto.CategoriaResponseDTO;
 import com.example.BoloDeLaMadre.services.CategoriaService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -21,12 +22,12 @@ public class CategoriaController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoriaResponseDTO create(@RequestBody CategoriaRequestDTO dto) {
+    public CategoriaResponseDTO create(@Valid @RequestBody CategoriaRequestDTO dto) {
         return categoriaService.create(dto);
     }
 
     @PutMapping("/{id}")
-    public CategoriaResponseDTO update(@PathVariable UUID id,
+    public CategoriaResponseDTO update(@Valid @PathVariable UUID id,
                                        @RequestBody CategoriaRequestDTO dto) {
         return categoriaService.update(id, dto);
     }
