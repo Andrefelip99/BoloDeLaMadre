@@ -4,13 +4,13 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.BoloDeLaMadre.entities.Funcionario;
 import com.example.BoloDeLaMadre.excepions.BadRequestException;
 import com.example.BoloDeLaMadre.excepions.ResourceNotFoundException;
 import com.example.BoloDeLaMadre.repositories.FuncionarioRepository;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -19,11 +19,13 @@ public class FuncionarioService {
 
     private final FuncionarioRepository funcionarioRepository;
 
+    
     public Funcionario create(Funcionario funcionario) {
         funcionario.setAtivo(true);
         return funcionarioRepository.save(funcionario);
     }
 
+  
     public Funcionario update(UUID id, Funcionario data) {
         Funcionario func = funcionarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Funcionario não encontrado"));
@@ -37,6 +39,7 @@ public class FuncionarioService {
         return funcionarioRepository.save(func);
     }
 
+    
     @Transactional
     public void delete(UUID id) {
         Funcionario func = funcionarioRepository.findById(id)
@@ -50,13 +53,14 @@ public class FuncionarioService {
         funcionarioRepository.save(func);
     }
 
+    
     public Funcionario getById(UUID id) {
         return funcionarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Funcionario não encontrado"));
     }
 
+    
     public List<Funcionario> listAll() {
         return funcionarioRepository.findAll();
     }
-
 }

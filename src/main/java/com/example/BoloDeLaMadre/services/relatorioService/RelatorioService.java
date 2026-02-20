@@ -57,7 +57,7 @@ public class RelatorioService {
         YearMonth mesAnterior = mesAtual.minusMonths(1);
         var vendas = vendaRepository.findAll();
 
-        BigDecimal receitaMes = somarVendasPorMes(vendas, mesAtual);
+        BigDecimal receitaMes = vendaRepository.sumTotalByMesEAno(mesAtual.getMonthValue(), mesAtual.getYear());
         BigDecimal receitaMesAnterior = somarVendasPorMes(vendas, mesAnterior);
 
         long quantidadeVendas = vendas.stream()
@@ -68,7 +68,7 @@ public class RelatorioService {
                 ? BigDecimal.ZERO
                 : receitaMes.divide(BigDecimal.valueOf(quantidadeVendas), 2, RoundingMode.HALF_UP);
 
-        long estoqueBaixo = ingredienteRepository.countByEstoqueAtualLessThanEstoqueMinimo();
+        long estoqueBaixo = ingredienteRepository.countByEstoqueAbaixoDoMinimo();
 
         KpiDataDTO dto = new KpiDataDTO();
         dto.setReceitaMes(receitaMes);

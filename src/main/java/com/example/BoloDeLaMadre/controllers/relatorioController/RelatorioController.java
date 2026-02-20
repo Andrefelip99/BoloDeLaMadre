@@ -20,18 +20,15 @@ public class RelatorioController {
 
     private final RelatorioService relatorioService;
 
-    
-
     @GetMapping("/dre")
     public ResponseEntity<DreDataDTO> getDre(
             @RequestParam(required = false) Integer mes,
             @RequestParam(required = false) Integer ano) {
 
         YearMonth periodo = getPeriodo(mes, ano);
-
-        return ResponseEntity.ok(relatorioService.gerarDre(periodo));
+        DreDataDTO dre = relatorioService.gerarDre(periodo);
+        return ResponseEntity.ok(dre);
     }
-
 
     @GetMapping("/kpis")
     public ResponseEntity<KpiDataDTO> getKpis(
@@ -39,11 +36,9 @@ public class RelatorioController {
             @RequestParam(required = false) Integer ano) {
 
         YearMonth periodo = getPeriodo(mes, ano);
-
-        return ResponseEntity.ok(relatorioService.gerarKpi(periodo));
+        KpiDataDTO kpi = relatorioService.gerarKpi(periodo);
+        return ResponseEntity.ok(kpi);
     }
-
-    
 
     @GetMapping("/insights")
     public ResponseEntity<List<AiInsightDTO>> getInsights(
@@ -51,18 +46,14 @@ public class RelatorioController {
             @RequestParam(required = false) Integer ano) {
 
         YearMonth periodo = getPeriodo(mes, ano);
-
-        return ResponseEntity.ok(relatorioService.gerarInsights(periodo));
+        List<AiInsightDTO> insights = relatorioService.gerarInsights(periodo);
+        return ResponseEntity.ok(insights);
     }
 
-
-
     private YearMonth getPeriodo(Integer mes, Integer ano) {
-
         if (mes == null || ano == null) {
             return YearMonth.now();
         }
-
         return YearMonth.of(ano, mes);
     }
 }

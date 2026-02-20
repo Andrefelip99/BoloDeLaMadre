@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.BoloDeLaMadre.entities.Fornecedor;
@@ -31,18 +32,20 @@ public class FornecedorController {
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         fornecedorService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
-    public Fornecedor getById(@PathVariable UUID id) {
-        return fornecedorService.getById(id);
+    public ResponseEntity<Fornecedor> getById(@PathVariable UUID id) {
+        Fornecedor fornecedor = fornecedorService.getById(id);
+        return ResponseEntity.ok(fornecedor);
     }
 
     @GetMapping
-    public List<Fornecedor> listAll() {
-        return fornecedorService.listAll();
+    public ResponseEntity<List<Fornecedor>> listAll() {
+        List<Fornecedor> fornecedores = fornecedorService.listAll();
+        return ResponseEntity.ok(fornecedores);
     }
 }

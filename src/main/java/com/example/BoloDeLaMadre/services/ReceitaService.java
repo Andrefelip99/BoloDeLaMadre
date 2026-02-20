@@ -22,69 +22,78 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReceitaService {
 
-        private final ReceitaRepository receitaRepository;
-        private final ProdutoRepository produtoRepository;
-        private final IngredienteRepository ingredienteRepository;
+    private final ReceitaRepository receitaRepository;
+    private final ProdutoRepository produtoRepository;
+    private final IngredienteRepository ingredienteRepository;
 
-        @Transactional
-        public Receita create(UUID produtoId, UUID ingredienteId, Double quantidade, UnidadeMedida unidade) {
-                Produto produto = produtoRepository.findById(produtoId)
-                                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
-                Ingrediente ingrediente = ingredienteRepository.findById(ingredienteId)
-                                .orElseThrow(() -> new ResourceNotFoundException("Ingrediente não encontrado"));
+    public Receita create(UUID produtoId, UUID ingredienteId, Double quantidade, UnidadeMedida unidade) {
 
-                Receita receita = Receita.builder()
-                                .produto(produto)
-                                .ingrediente(ingrediente)
-                                .quantidade(quantidade)
-                                .unidade(unidade)
-                                .build();
+        Produto produto = buscarProduto(produtoId);
+        Ingrediente ingrediente = buscarIngrediente(ingredienteId);
 
-                return receitaRepository.save(receita);
+        Receita receita = Receita.builder()
+                .produto(produto)
+                .ingrediente(ingrediente)
+                .quantidade(quantidade)
+                .unidade(unidade)
+                .ativo(true)
+                .build();
+
+        return receitaRepository.save(receita);
+    }
+
+    @Transactional
+
+    public Receita update(UUID id, UUID produtoId, UUID ingredienteId, Double quantidade, UnidadeMedida unidade) {
+
+        Receita receita = buscarReceita(id);
+
+        Produto produto = buscarProduto(produtoId);
+        Ingrediente ingrediente = buscarIngrediente(ingredienteId);
+
+        receita.setProduto(produto);
+        receita.setIngrediente(ingrediente);
+        receita.setQuantidade(quantidade);
+        receita.setUnidade(unidade);
+
+        return receitaRepository.save(receita);
+    }
+
+    @Transactional
+
+    public void delete(UUID id) {
+
+        Receita receita = buscarReceita(id);
+
+        if (!receita.getAtivo()) {
+            throw new BadRequestException("Receita já está inativa");
         }
 
-        @Transactional
-        public Receita update(UUID id, UUID produtoId, UUID ingredienteId, Double quantidade, UnidadeMedida unidade) {
-                Receita receita = receitaRepository.findById(id)
-                                .orElseThrow(() -> new ResourceNotFoundException("Receita não encontrada"));
+        receita.setAtivo(false);
+        receitaRepository.save(receita);
+    }
 
-                Produto produto = produtoRepository.findById(produtoId)
-                                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
-                Ingrediente ingrediente = ingredienteRepository.findById(ingredienteId)
-                                .orElseThrow(() -> new ResourceNotFoundException("Ingrediente não encontrado"));
+    public Receita getByIdWithProdutoAndIngrediente(UUID id) {
+        return receitaRepository.findByIdWithProdutoAndIngrediente(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Receita não encontrada"));
+    }
 
-                receita.setProduto(produto);
-                receita.setIngrediente(ingrediente);
-                receita.setQuantidade(quantidade);
-                receita.setUnidade(unidade);
+    public List<Receita> listAllWithProdutoAndIngrediente() {
+        return receitaRepository.findAllWithProdutoAndIngrediente();
+    }
 
-                return receitaRepository.save(receita);
-        }
+    private Receita buscarReceita(UUID id) {
+        return receitaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Receita não encontrada"));
+    }
 
-        @Transactional
-        public void delete(UUID id) {
-                Receita receita = receitaRepository.findById(id)
-                                .orElseThrow(() -> new ResourceNotFoundException("Receita não encontrada"));
-                receitaRepository.delete(receita);
+    private Produto buscarProduto(UUID id) {
+        return produtoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
+    }
 
-                if (!receita.getAtivo()) {
-                        throw new BadRequestException("Categoria já está inativa");
-                }
-
-                receita.setAtivo(false);
-                receitaRepository.save(receita);
-
-        }
-
-       
-        public Receita getByIdWithProdutoAndIngrediente(UUID id) {
-                return receitaRepository.findByIdWithProdutoAndIngrediente(id)
-                                .orElseThrow(() -> new ResourceNotFoundException("Receita não encontrada"));
-        }
-
-        
-        public List<Receita> listAllWithProdutoAndIngrediente() {
-                return receitaRepository.findAllWithProdutoAndIngrediente();
-        }
-
+    private Ingrediente buscarIngrediente(UUID id) {
+        return ingredienteRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Ingrediente não encontrado"));
+    }
 }

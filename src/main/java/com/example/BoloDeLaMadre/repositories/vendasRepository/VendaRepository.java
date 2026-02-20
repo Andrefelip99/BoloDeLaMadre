@@ -1,5 +1,6 @@
 package com.example.BoloDeLaMadre.repositories.vendasRepository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,5 +25,11 @@ public interface VendaRepository extends JpaRepository<Venda, UUID> {
             "JOIN FETCH v.funcionario " +
             "LEFT JOIN FETCH v.itens")
     List<Venda> findAllWithDetails();
+
+     @Query("SELECT v FROM Venda v WHERE FUNCTION('YEAR', v.dataVenda) = :ano AND FUNCTION('MONTH', v.dataVenda) = :mes")
+    List<Venda> findByMesEAno(@Param("mes") int mes, @Param("ano") int ano);
+
+    @Query("SELECT SUM(v.total) FROM Venda v WHERE FUNCTION('YEAR', v.dataVenda) = :ano AND FUNCTION('MONTH', v.dataVenda) = :mes")
+    BigDecimal sumTotalByMesEAno(@Param("mes") int mes, @Param("ano") int ano);
 
 }

@@ -58,6 +58,7 @@ public class ClienteService {
     }
 
     public List<Cliente> listAll() {
-        return clienteRepository.findAll();
-    }
+    return clienteRepository.findByAtivoTrue();
+}
+
 }

@@ -1,11 +1,11 @@
 package com.example.BoloDeLaMadre.services;
 
 import java.math.BigDecimal;
+
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.BoloDeLaMadre.entities.Fornecedor;
 import com.example.BoloDeLaMadre.entities.Ingrediente;
@@ -15,6 +15,7 @@ import com.example.BoloDeLaMadre.excepions.ResourceNotFoundException;
 import com.example.BoloDeLaMadre.repositories.FornecedorRepository;
 import com.example.BoloDeLaMadre.repositories.IngredienteRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -25,14 +26,14 @@ public class IngredienteService {
         private final FornecedorRepository fornecedorRepository;
 
         @Transactional
-        public Ingrediente create(String nome, UnidadeMedida unidade, BigDecimal custoUnitario,
-                        Double estoqueAtual, Double estoqueMinimo, UUID fornecedorId) {
+        public Ingrediente create(String nome,
+                        UnidadeMedida unidade,
+                        BigDecimal custoUnitario,
+                        Double estoqueAtual,
+                        Double estoqueMinimo,
+                        UUID fornecedorId) {
 
-                Fornecedor fornecedor = null;
-                if (fornecedorId != null) {
-                        fornecedor = fornecedorRepository.findById(fornecedorId)
-                                        .orElseThrow(() -> new ResourceNotFoundException("Fornecedor não encontrado"));
-                }
+                Fornecedor fornecedor = buscarFornecedorSeInformado(fornecedorId);
 
                 Ingrediente ing = Ingrediente.builder()
                                 .nome(nome)
@@ -48,17 +49,21 @@ public class IngredienteService {
         }
 
         @Transactional
-        public Ingrediente update(UUID id, String nome, UnidadeMedida unidade, BigDecimal custoUnitario,
-                        Double estoqueAtual, Double estoqueMinimo, UUID fornecedorId) {
+        public Ingrediente update(UUID id,
+                        String nome,
+                        UnidadeMedida unidade,
+                        BigDecimal custoUnitario,
+                        Double estoqueAtual,
+                        Double estoqueMinimo,
+                        UUID fornecedorId) {
 
-                Ingrediente ing = ingredienteRepository.findById(id)
-                                .orElseThrow(() -> new ResourceNotFoundException("Ingrediente não encontrado"));
+                Ingrediente ing = buscarIngrediente(id);
 
-                Fornecedor fornecedor = null;
-                if (fornecedorId != null) {
-                        fornecedor = fornecedorRepository.findById(fornecedorId)
-                                        .orElseThrow(() -> new ResourceNotFoundException("Fornecedor não encontrado"));
+                if (!ing.getAtivo()) {
+                        throw new BadRequestException("Ingrediente está inativo");
                 }
+
+                Fornecedor fornecedor = buscarFornecedorSeInformado(fornecedorId);
 
                 ing.setNome(nome);
                 ing.setUnidade(unidade);
@@ -72,18 +77,20 @@ public class IngredienteService {
 
         @Transactional
         public void delete(UUID id) {
-                Ingrediente ing = ingredienteRepository.findById(id)
-                                .orElseThrow(() -> new ResourceNotFoundException("Ingrediente não encontrado"));
+
+                Ingrediente ing = buscarIngrediente(id);
 
                 if (!ing.getAtivo()) {
-                        throw new BadRequestException("Categoria já está inativa");
+                        throw new BadRequestException("Ingrediente já está inativo");
                 }
+
                 ing.setAtivo(false);
                 ingredienteRepository.save(ing);
         }
 
         public Ingrediente getById(UUID id) {
-                return ingredienteRepository.findByIdWithFornecedor(id);
+                return ingredienteRepository.findByIdWithFornecedor(id)
+                                .orElseThrow(() -> new ResourceNotFoundException("Ingrediente não encontrado"));
         }
 
         public List<Ingrediente> listAll() {
@@ -91,7 +98,23 @@ public class IngredienteService {
         }
 
         public long countEstoqueBaixo() {
-                return ingredienteRepository.countByEstoqueAtualLessThanEstoqueMinimo();
+                return ingredienteRepository.countByEstoqueAbaixoDoMinimo();
         }
 
+       
+
+        private Ingrediente buscarIngrediente(UUID id) {
+                return ingredienteRepository.findById(id)
+                                .orElseThrow(() -> new ResourceNotFoundException("Ingrediente não encontrado"));
+        }
+
+        private Fornecedor buscarFornecedorSeInformado(UUID fornecedorId) {
+
+                if (fornecedorId == null) {
+                        return null;
+                }
+
+                return fornecedorRepository.findById(fornecedorId)
+                                .orElseThrow(() -> new ResourceNotFoundException("Fornecedor não encontrado"));
+        }
 }

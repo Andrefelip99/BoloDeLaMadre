@@ -21,21 +21,23 @@ public class ReceitaController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Receita create(@RequestParam UUID produtoId,
-                          @RequestParam UUID ingredienteId,
-                          @RequestParam Double quantidade,
-                          @RequestParam UnidadeMedida unidade) {
-
+    public Receita create(
+            @RequestParam UUID produtoId,
+            @RequestParam UUID ingredienteId,
+            @RequestParam Double quantidade,
+            @RequestParam UnidadeMedida unidade
+    ) {
         return receitaService.create(produtoId, ingredienteId, quantidade, unidade);
     }
 
     @PutMapping("/{id}")
-    public Receita update(@PathVariable UUID id,
-                          @RequestParam UUID produtoId,
-                          @RequestParam UUID ingredienteId,
-                          @RequestParam Double quantidade,
-                          @RequestParam UnidadeMedida unidade) {
-
+    public Receita update(
+            @PathVariable UUID id,
+            @RequestParam UUID produtoId,
+            @RequestParam UUID ingredienteId,
+            @RequestParam Double quantidade,
+            @RequestParam UnidadeMedida unidade
+    ) {
         return receitaService.update(id, produtoId, ingredienteId, quantidade, unidade);
     }
 

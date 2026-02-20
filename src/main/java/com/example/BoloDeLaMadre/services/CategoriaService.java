@@ -55,8 +55,9 @@ public class CategoriaService {
     }
 
     public List<CategoriaResponseDTO> listAll() {
-        return categoriaRepository.findAll().stream()
-                .map(CategoriaResponseDTO::new)
-                .collect(Collectors.toList());
-    }
+    return categoriaRepository.findByAtivoTrue().stream()
+            .map(CategoriaResponseDTO::new)
+            .collect(Collectors.toList());
+}
+
 }

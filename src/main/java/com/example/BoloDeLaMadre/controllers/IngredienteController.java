@@ -30,8 +30,12 @@ public class IngredienteController {
                               @RequestParam(required = false) UUID fornecedorId) {
 
         return ingredienteService.create(
-                nome, unidade, custoUnitario,
-                estoqueAtual, estoqueMinimo, fornecedorId
+                nome,
+                unidade,
+                custoUnitario,
+                estoqueAtual,
+                estoqueMinimo,
+                fornecedorId
         );
     }
 
@@ -45,8 +49,13 @@ public class IngredienteController {
                               @RequestParam(required = false) UUID fornecedorId) {
 
         return ingredienteService.update(
-                id, nome, unidade, custoUnitario,
-                estoqueAtual, estoqueMinimo, fornecedorId
+                id,
+                nome,
+                unidade,
+                custoUnitario,
+                estoqueAtual,
+                estoqueMinimo,
+                fornecedorId
         );
     }
 

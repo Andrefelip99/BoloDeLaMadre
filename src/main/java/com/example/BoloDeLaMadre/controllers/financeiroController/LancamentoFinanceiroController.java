@@ -1,5 +1,6 @@
 package com.example.BoloDeLaMadre.controllers.financeiroController;
 
+import java.time.YearMonth;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -26,12 +27,26 @@ public class LancamentoFinanceiroController {
     }
 
     @GetMapping
-    public List<LancamentoFinanceiroResponseDTO> listAll() {
-        return lancamentoService.listAll();
+    public List<LancamentoFinanceiroResponseDTO> listAll(
+            @RequestParam(required = false) Integer mes,
+            @RequestParam(required = false) Integer ano) {
+
+        YearMonth periodo = (mes != null && ano != null)
+                ? YearMonth.of(ano, mes)
+                : YearMonth.now();
+
+        return lancamentoService.listByMesEAno(periodo);
     }
 
     @GetMapping("/resumo")
-    public ResumoFinanceiroDTO resumo() {
-        return lancamentoService.resumo();
+    public ResumoFinanceiroDTO resumo(
+            @RequestParam(required = false) Integer mes,
+            @RequestParam(required = false) Integer ano) {
+
+        YearMonth periodo = (mes != null && ano != null)
+                ? YearMonth.of(ano, mes)
+                : YearMonth.now();
+
+        return lancamentoService.resumo(periodo);
     }
 }

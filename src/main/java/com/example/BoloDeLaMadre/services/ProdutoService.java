@@ -25,12 +25,7 @@ public class ProdutoService {
     @Transactional
     public Produto create(Produto produto, UUID categoriaId) {
 
-        Categoria categoria = null;
-
-        if (categoriaId != null) {
-            categoria = categoriaRepository.findById(categoriaId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
-        }
+        Categoria categoria = buscarCategoriaSeInformada(categoriaId);
 
         produto.setCategoria(categoria);
         produto.setAtivo(true);
@@ -41,15 +36,9 @@ public class ProdutoService {
     @Transactional
     public Produto update(UUID id, Produto data, UUID categoriaId) {
 
-        Produto produto = produtoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
+        Produto produto = buscarProdutoPorId(id);
 
-        Categoria categoria = null;
-
-        if (categoriaId != null) {
-            categoria = categoriaRepository.findById(categoriaId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
-        }
+        Categoria categoria = buscarCategoriaSeInformada(categoriaId);
 
         produto.setNome(data.getNome());
         produto.setDescricao(data.getDescricao());
@@ -66,22 +55,38 @@ public class ProdutoService {
 
     @Transactional
     public void delete(UUID id) {
-        Produto produto = produtoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
+
+        Produto produto = buscarProdutoPorId(id);
 
         if (!produto.getAtivo()) {
-            throw new BadRequestException("Categoria já está inativa");
+            throw new BadRequestException("Produto já está inativo");
         }
 
         produto.setAtivo(false);
         produtoRepository.save(produto);
     }
 
-     public Produto getById(UUID id) {
-        return produtoRepository.findByIdWithCategoria(id);
+    public Produto getById(UUID id) {
+        return produtoRepository.findByIdWithCategoria(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
     }
 
     public List<Produto> listAll() {
         return produtoRepository.findAllWithCategoria();
+    }
+
+    private Produto buscarProdutoPorId(UUID id) {
+        return produtoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
+    }
+
+    private Categoria buscarCategoriaSeInformada(UUID categoriaId) {
+
+        if (categoriaId == null) {
+            return null;
+        }
+
+        return categoriaRepository.findById(categoriaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
     }
 }

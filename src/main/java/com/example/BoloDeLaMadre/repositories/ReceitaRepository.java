@@ -20,8 +20,12 @@ public interface ReceitaRepository extends JpaRepository<Receita, UUID> {
     Optional<Receita> findByIdWithProdutoAndIngrediente(@Param("id") UUID id);
 
    
-    @Query("SELECT r FROM Receita r " +
-           "JOIN FETCH r.produto " +
-           "JOIN FETCH r.ingrediente")
-    List<Receita> findAllWithProdutoAndIngrediente();
+    @Query("""
+       SELECT r FROM Receita r
+       JOIN FETCH r.produto
+       JOIN FETCH r.ingrediente
+       WHERE r.ativo = true
+       """)
+List<Receita> findAllWithProdutoAndIngrediente();
+
 }

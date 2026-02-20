@@ -1,5 +1,6 @@
 package com.example.BoloDeLaMadre.services.vendaService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,6 +40,8 @@ public class ItemVendaService {
         item.setQuantidade(dto.getQuantidade());
         item.setPrecoUnitario(dto.getPrecoUnitario());
         item.setCustoUnitario(dto.getCustoUnitario());
+        item.setSubtotal(item.getPrecoUnitario().multiply(BigDecimal.valueOf(item.getQuantidade())));
+
 
         itemVendaRepository.save(item);
 

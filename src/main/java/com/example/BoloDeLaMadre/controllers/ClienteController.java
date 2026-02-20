@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.BoloDeLaMadre.entities.Cliente;
@@ -25,24 +26,26 @@ public class ClienteController {
     }
 
     @PutMapping("/{id}")
-    public Cliente update(@PathVariable UUID id,
-                          @RequestBody Cliente cliente) {
+    public Cliente update(@PathVariable UUID id, @RequestBody Cliente cliente) {
         return clienteService.update(id, cliente);
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         clienteService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
-    public Cliente getById(@PathVariable UUID id) {
-        return clienteService.getById(id);
+    public ResponseEntity<Cliente> getById(@PathVariable UUID id) {
+        Cliente cliente = clienteService.getById(id);
+        return ResponseEntity.ok(cliente);
     }
 
     @GetMapping
-    public List<Cliente> listAll() {
-        return clienteService.listAll();
+    public ResponseEntity<List<Cliente>> listAll() {
+        
+        List<Cliente> clientesAtivos = clienteService.listAll();
+        return ResponseEntity.ok(clientesAtivos);
     }
 }
