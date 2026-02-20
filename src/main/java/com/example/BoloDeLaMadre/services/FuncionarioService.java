@@ -3,9 +3,11 @@ package com.example.BoloDeLaMadre.services;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.BoloDeLaMadre.dto.AlterarSenhaDTO;
 import com.example.BoloDeLaMadre.entities.Funcionario;
 import com.example.BoloDeLaMadre.excepions.BadRequestException;
 import com.example.BoloDeLaMadre.excepions.ResourceNotFoundException;
@@ -18,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class FuncionarioService {
 
     private final FuncionarioRepository funcionarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
     
     public Funcionario create(Funcionario funcionario) {
@@ -63,4 +66,19 @@ public class FuncionarioService {
     public List<Funcionario> listAll() {
         return funcionarioRepository.findAll();
     }
+    public void alterarSenha(UUID funcionarioId, AlterarSenhaDTO dto) {
+    Funcionario f = funcionarioRepository.findById(funcionarioId)
+            .orElseThrow(() -> new RuntimeException("Funcionário não encontrado"));
+
+    
+    if (dto.getSenhaAntiga() != null && !passwordEncoder.matches(dto.getSenhaAntiga(), f.getSenha())) {
+        throw new RuntimeException("Senha antiga incorreta");
+    }
+
+    f.setSenha(passwordEncoder.encode(dto.getSenhaNova()));
+    funcionarioRepository.save(f);
 }
+
+    
+}
+

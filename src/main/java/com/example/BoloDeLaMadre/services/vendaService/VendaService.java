@@ -120,4 +120,6 @@ public void cancelarVenda(UUID id) {
     venda.setStatus(StatusVenda.CANCELADA);
     vendaRepository.save(venda);
 }
+
+
 }

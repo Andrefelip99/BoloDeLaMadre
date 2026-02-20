@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.BoloDeLaMadre.entities.Receita;
@@ -20,6 +21,7 @@ public class ReceitaController {
     private final ReceitaService receitaService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     public Receita create(
             @RequestParam UUID produtoId,
@@ -31,6 +33,7 @@ public class ReceitaController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public Receita update(
             @PathVariable UUID id,
             @RequestParam UUID produtoId,
@@ -42,17 +45,20 @@ public class ReceitaController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) {
         receitaService.delete(id);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public Receita getById(@PathVariable UUID id) {
         return receitaService.getByIdWithProdutoAndIngrediente(id);
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Receita> listAll() {
         return receitaService.listAllWithProdutoAndIngrediente();
     }

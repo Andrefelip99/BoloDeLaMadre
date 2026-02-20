@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.BoloDeLaMadre.dto.iaDto.AiMensagemResponseDTO;
@@ -17,34 +18,31 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AiConversaController {
 
-    private final AiConversaService aiConversaService;
+    private final AiConversaService service;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyRole('ADMIN','FUNCIONARIO')")
     public AiConversa create(@RequestParam String titulo) {
-        return aiConversaService.create(titulo);
+        return service.create(titulo);
     }
 
     @GetMapping
-    public List<AiConversa> listAll() {
-        return aiConversaService.listAll();
+    @PreAuthorize("hasAnyRole('ADMIN','FUNCIONARIO')")
+    public List<AiConversa> list() {
+        return service.list();
     }
 
     @GetMapping("/{id}/mensagens")
+    @PreAuthorize("hasAnyRole('ADMIN','FUNCIONARIO')")
     public List<AiMensagemResponseDTO> listMensagens(@PathVariable UUID id) {
-        AiConversa conversa = aiConversaService.listAll()
-                .stream()
-                .filter(c -> c.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Conversa não encontrada"));
-
-        return aiConversaService.listMensagens(conversa.getId());
-
+        return service.listMensagens(id);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAnyRole('ADMIN','FUNCIONARIO')")
     public void delete(@PathVariable UUID id) {
-        aiConversaService.delete(id);
+        service.delete(id);
     }
 }

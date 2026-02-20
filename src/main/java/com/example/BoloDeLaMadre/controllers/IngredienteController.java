@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.BoloDeLaMadre.entities.Ingrediente;
@@ -22,6 +23,7 @@ public class IngredienteController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN')")
     public Ingrediente create(@RequestParam String nome,
                               @RequestParam UnidadeMedida unidade,
                               @RequestParam BigDecimal custoUnitario,
@@ -40,6 +42,7 @@ public class IngredienteController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public Ingrediente update(@PathVariable UUID id,
                               @RequestParam String nome,
                               @RequestParam UnidadeMedida unidade,
@@ -60,17 +63,20 @@ public class IngredienteController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) {
         ingredienteService.delete(id);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public Ingrediente getById(@PathVariable UUID id) {
         return ingredienteService.getById(id);
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Ingrediente> listAll() {
         return ingredienteService.listAll();
     }

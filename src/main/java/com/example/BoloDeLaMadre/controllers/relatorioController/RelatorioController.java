@@ -4,6 +4,7 @@ import java.time.YearMonth;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.BoloDeLaMadre.dto.relatorioDto.AiInsightDTO;
@@ -21,6 +22,7 @@ public class RelatorioController {
     private final RelatorioService relatorioService;
 
     @GetMapping("/dre")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DreDataDTO> getDre(
             @RequestParam(required = false) Integer mes,
             @RequestParam(required = false) Integer ano) {
@@ -31,6 +33,7 @@ public class RelatorioController {
     }
 
     @GetMapping("/kpis")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<KpiDataDTO> getKpis(
             @RequestParam(required = false) Integer mes,
             @RequestParam(required = false) Integer ano) {
@@ -41,6 +44,7 @@ public class RelatorioController {
     }
 
     @GetMapping("/insights")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<AiInsightDTO>> getInsights(
             @RequestParam(required = false) Integer mes,
             @RequestParam(required = false) Integer ano) {
@@ -49,7 +53,7 @@ public class RelatorioController {
         List<AiInsightDTO> insights = relatorioService.gerarInsights(periodo);
         return ResponseEntity.ok(insights);
     }
-
+    
     private YearMonth getPeriodo(Integer mes, Integer ano) {
         if (mes == null || ano == null) {
             return YearMonth.now();

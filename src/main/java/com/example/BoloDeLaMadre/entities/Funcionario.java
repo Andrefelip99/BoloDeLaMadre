@@ -26,9 +26,12 @@ public class Funcionario extends BaseEntity {
     private String nome;
     private String email;
     private String telefone;
+    private String senha;
 
     @Enumerated(EnumType.STRING)
     private PapelUsuario papel;
+
+    
 
     private BigDecimal salario;
     private Boolean ativo;

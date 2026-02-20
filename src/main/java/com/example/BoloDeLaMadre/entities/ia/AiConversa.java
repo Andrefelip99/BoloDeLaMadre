@@ -4,7 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Id;
+
 
 import com.example.BoloDeLaMadre.entities.Funcionario;
 
