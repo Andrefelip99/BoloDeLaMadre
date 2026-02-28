@@ -3,7 +3,6 @@ package com.example.BoloDeLaMadre.services;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,15 +19,13 @@ import lombok.RequiredArgsConstructor;
 public class FuncionarioService {
 
     private final FuncionarioRepository funcionarioRepository;
-    private final PasswordEncoder passwordEncoder;
 
-    
     public Funcionario create(Funcionario funcionario) {
         funcionario.setAtivo(true);
+        // passwords are stored as plain text after removing Spring Security
         return funcionarioRepository.save(funcionario);
     }
 
-  
     public Funcionario update(UUID id, Funcionario data) {
         Funcionario func = funcionarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Funcionario não encontrado"));
@@ -42,7 +39,6 @@ public class FuncionarioService {
         return funcionarioRepository.save(func);
     }
 
-    
     @Transactional
     public void delete(UUID id) {
         Funcionario func = funcionarioRepository.findById(id)
@@ -56,29 +52,22 @@ public class FuncionarioService {
         funcionarioRepository.save(func);
     }
 
-    
     public Funcionario getById(UUID id) {
         return funcionarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Funcionario não encontrado"));
     }
 
-    
     public List<Funcionario> listAll() {
         return funcionarioRepository.findAll();
     }
-    public void alterarSenha(UUID funcionarioId, AlterarSenhaDTO dto) {
-    Funcionario f = funcionarioRepository.findById(funcionarioId)
-            .orElseThrow(() -> new RuntimeException("Funcionário não encontrado"));
 
-    
-    if (dto.getSenhaAntiga() != null && !passwordEncoder.matches(dto.getSenhaAntiga(), f.getSenha())) {
-        throw new RuntimeException("Senha antiga incorreta");
+    public void alterarSenha(UUID funcionarioId, AlterarSenhaDTO dto) {
+        Funcionario f = funcionarioRepository.findById(funcionarioId)
+                .orElseThrow(() -> new RuntimeException("Funcionário não encontrado"));
+
+        // simply replace the password without encoding or verification
+        f.setSenha(dto.getSenhaNova());
+        funcionarioRepository.save(f);
     }
 
-    f.setSenha(passwordEncoder.encode(dto.getSenhaNova()));
-    funcionarioRepository.save(f);
 }
-
-    
-}
-

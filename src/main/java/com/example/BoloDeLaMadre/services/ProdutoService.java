@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.BoloDeLaMadre.dto.ProdutoRequestDTO;
 import com.example.BoloDeLaMadre.entities.Categoria;
 import com.example.BoloDeLaMadre.entities.Produto;
 import com.example.BoloDeLaMadre.excepions.BadRequestException;
@@ -23,31 +24,31 @@ public class ProdutoService {
     private final CategoriaRepository categoriaRepository;
 
     @Transactional
-    public Produto create(Produto produto, UUID categoriaId) {
+    public Produto create(ProdutoRequestDTO dto) {
 
-        Categoria categoria = buscarCategoriaSeInformada(categoriaId);
+        Categoria categoria = buscarCategoriaSeInformada(dto.getCategoriaId());
 
-        produto.setCategoria(categoria);
-        produto.setAtivo(true);
+        Produto produto = Produto.builder()
+                .nome(dto.getNome())
+                .descricao(dto.getDescricao())
+                .preco(dto.getPreco())
+                .ativo(dto.getAtivo() != null ? dto.getAtivo() : true)
+                .categoria(categoria)
+                .build();
 
         return produtoRepository.save(produto);
     }
 
     @Transactional
-    public Produto update(UUID id, Produto data, UUID categoriaId) {
+    public Produto update(UUID id, ProdutoRequestDTO dto) {
 
         Produto produto = buscarProdutoPorId(id);
 
-        Categoria categoria = buscarCategoriaSeInformada(categoriaId);
+        Categoria categoria = buscarCategoriaSeInformada(dto.getCategoriaId());
 
-        produto.setNome(data.getNome());
-        produto.setDescricao(data.getDescricao());
-        produto.setPreco(data.getPreco());
-        produto.setCustoEstimado(data.getCustoEstimado());
-        produto.setMargemLucro(data.getMargemLucro());
-        produto.setTamanho(data.getTamanho());
-        produto.setPesoKg(data.getPesoKg());
-        produto.setFotoUrl(data.getFotoUrl());
+        produto.setNome(dto.getNome());
+        produto.setDescricao(dto.getDescricao());
+        produto.setPreco(dto.getPreco());
         produto.setCategoria(categoria);
 
         return produtoRepository.save(produto);
@@ -66,11 +67,13 @@ public class ProdutoService {
         produtoRepository.save(produto);
     }
 
+    @Transactional(readOnly = true)
     public Produto getById(UUID id) {
         return produtoRepository.findByIdWithCategoria(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
     }
 
+    @Transactional(readOnly = true)
     public List<Produto> listAll() {
         return produtoRepository.findAllWithCategoria();
     }

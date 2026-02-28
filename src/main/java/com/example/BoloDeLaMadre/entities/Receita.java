@@ -2,7 +2,7 @@ package com.example.BoloDeLaMadre.entities;
 
 import java.util.UUID;
 
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Id;
 
 import com.example.BoloDeLaMadre.entities.enums.UnidadeMedida;
 

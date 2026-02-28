@@ -3,7 +3,8 @@ package com.example.BoloDeLaMadre.entities.ia;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Id;
+
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -40,7 +41,7 @@ public class AiMensagem {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "TEXT")
     private String metadata;
 
     private LocalDateTime createdAt;

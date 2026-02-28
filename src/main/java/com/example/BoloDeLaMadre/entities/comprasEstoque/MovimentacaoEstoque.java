@@ -3,8 +3,8 @@ package com.example.BoloDeLaMadre.entities.comprasEstoque;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import jakarta.persistence.Id;
 
-import org.springframework.data.annotation.Id;
 
 import com.example.BoloDeLaMadre.entities.Funcionario;
 import com.example.BoloDeLaMadre.entities.Ingrediente;

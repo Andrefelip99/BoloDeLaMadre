@@ -30,96 +30,162 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class VendaService {
 
-    private final VendaRepository vendaRepository;
-    private final ClienteRepository clienteRepository;
-    private final FuncionarioRepository funcionarioRepository;
-    private final ProdutoRepository produtoRepository;
-    private final ItemVendaRepository itemVendaRepository;
+        private final VendaRepository vendaRepository;
+        private final ClienteRepository clienteRepository;
+        private final FuncionarioRepository funcionarioRepository;
+        private final ProdutoRepository produtoRepository;
+        private final ItemVendaRepository itemVendaRepository;
 
-    @Transactional
-    public VendaDetailsDTO create(VendaRequestDTO dto) {
-       
-        Cliente cliente = clienteRepository.findById(dto.getClienteId())
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
+        @Transactional
+        public VendaDetailsDTO create(VendaRequestDTO dto) {
 
-        Funcionario funcionario = funcionarioRepository.findById(dto.getFuncionarioId())
-                .orElseThrow(() -> new ResourceNotFoundException("Funcionário não encontrado"));
+                if (dto.getItens() == null || dto.getItens().isEmpty()) {
+                        throw new BadRequestException("A venda deve possuir pelo menos um item");
+                }
 
-        
-        Venda venda = Venda.builder()
-                .cliente(cliente)
-                .funcionario(funcionario)
-                .canal(dto.getCanal())
-                .status(StatusVenda.PENDENTE)
-                .desconto(dto.getDesconto())
-                .taxaEntrega(dto.getTaxaEntrega())
-                .formaPagamento(dto.getFormaPagamento())
-                .build();
+                Cliente cliente = clienteRepository.findById(dto.getClienteId())
+                                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
 
-        vendaRepository.save(venda);
+                Funcionario funcionario = funcionarioRepository.findById(dto.getFuncionarioId())
+                                .orElseThrow(() -> new ResourceNotFoundException("Funcionário não encontrado"));
 
-        
-        List<ItemVenda> itensVenda = dto.getItens().stream().map(itemDTO -> {
-            Produto produto = produtoRepository.findById(itemDTO.getProdutoId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
+                Venda venda = Venda.builder()
+                                .cliente(cliente)
+                                .funcionario(funcionario)
+                                .canal(dto.getCanal())
+                                .status(StatusVenda.PENDENTE)
+                                .desconto(dto.getDesconto())
+                                .taxaEntrega(dto.getTaxaEntrega())
+                                .formaPagamento(dto.getFormaPagamento())
+                                .build();
 
-            BigDecimal subtotal = itemDTO.getPrecoUnitario().multiply(BigDecimal.valueOf(itemDTO.getQuantidade()));
+                vendaRepository.save(venda);
 
-            return ItemVenda.builder()
-                    .venda(venda)
-                    .produto(produto)
-                    .quantidade(itemDTO.getQuantidade())
-                    .precoUnitario(itemDTO.getPrecoUnitario())
-                    .custoUnitario(itemDTO.getCustoUnitario())
-                    .subtotal(subtotal)
-                    .build();
-        }).toList();
+                List<ItemVenda> itensVenda = dto.getItens().stream().map(itemDTO -> {
 
-        itemVendaRepository.saveAll(itensVenda);
+                        Produto produto = produtoRepository.findById(itemDTO.getProdutoId())
+                                        .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
 
-        
-        List<ItemVendaResponseDTO> itensDTO = itensVenda.stream()
-                .map(ItemVendaResponseDTO::new)
-                .toList();
+                        BigDecimal subtotal = itemDTO.getPrecoUnitario()
+                                        .multiply(BigDecimal.valueOf(itemDTO.getQuantidade()));
 
-        return new VendaDetailsDTO(venda, itensDTO);
-    }
+                        return ItemVenda.builder()
+                                        .venda(venda)
+                                        .produto(produto)
+                                        .quantidade(itemDTO.getQuantidade())
+                                        .precoUnitario(itemDTO.getPrecoUnitario())
+                                        .custoUnitario(itemDTO.getCustoUnitario())
+                                        .subtotal(subtotal)
+                                        .build();
 
-    @Transactional(readOnly = true)
-    public VendaDetailsDTO getById(UUID id) {
-        Venda venda = vendaRepository.findByIdWithDetails(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Venda não encontrada"));
-
-        List<ItemVendaResponseDTO> itensDTO = venda.getItens().stream()
-                .map(ItemVendaResponseDTO::new)
-                .toList();
-
-        return new VendaDetailsDTO(venda, itensDTO);
-    }
-
-    @Transactional(readOnly = true)
-    public List<VendaDetailsDTO> listAll() {
-        return vendaRepository.findAllWithDetails().stream()
-                .map(venda -> {
-                    List<ItemVendaResponseDTO> itensDTO = venda.getItens().stream()
-                            .map(ItemVendaResponseDTO::new)
-                            .toList();
-                    return new VendaDetailsDTO(venda, itensDTO);
                 }).toList();
-    }
 
-    @Transactional
-public void cancelarVenda(UUID id) {
-    Venda venda = vendaRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Venda não encontrada"));
+                itemVendaRepository.saveAll(itensVenda);
 
-    if (venda.getStatus() == StatusVenda.CANCELADA) {
-        throw new BadRequestException("Venda já está cancelada");
-    }
+                List<ItemVendaResponseDTO> itensDTO = itensVenda.stream()
+                                .map(ItemVendaResponseDTO::new)
+                                .toList();
 
-    venda.setStatus(StatusVenda.CANCELADA);
-    vendaRepository.save(venda);
-}
+                return new VendaDetailsDTO(venda, itensDTO);
+        }
 
+        @Transactional(readOnly = true)
+        public VendaDetailsDTO getById(UUID id) {
 
+                Venda venda = vendaRepository.findByIdWithDetails(id)
+                                .orElseThrow(() -> new ResourceNotFoundException("Venda não encontrada"));
+
+                List<ItemVendaResponseDTO> itensDTO = venda.getItens().stream()
+                                .map(ItemVendaResponseDTO::new)
+                                .toList();
+
+                return new VendaDetailsDTO(venda, itensDTO);
+        }
+
+        @Transactional(readOnly = true)
+        public List<VendaDetailsDTO> listAll() {
+
+                return vendaRepository.findAllWithDetails().stream()
+                                .map(venda -> {
+                                        List<ItemVendaResponseDTO> itensDTO = venda.getItens().stream()
+                                                        .map(ItemVendaResponseDTO::new)
+                                                        .toList();
+
+                                        return new VendaDetailsDTO(venda, itensDTO);
+                                }).toList();
+        }
+
+        @Transactional
+        public void cancelarVenda(UUID id) {
+
+                Venda venda = vendaRepository.findById(id)
+                                .orElseThrow(() -> new ResourceNotFoundException("Venda não encontrada"));
+
+                if (venda.getStatus() == StatusVenda.CANCELADA) {
+                        throw new BadRequestException("Venda já está cancelada");
+                }
+
+                venda.setStatus(StatusVenda.CANCELADA);
+                vendaRepository.save(venda);
+        }
+
+        @Transactional
+        public VendaDetailsDTO update(UUID id, VendaRequestDTO dto) {
+
+                if (dto.getItens() == null || dto.getItens().isEmpty()) {
+                        throw new BadRequestException("A venda deve possuir pelo menos um item");
+                }
+
+                Venda venda = vendaRepository.findByIdWithDetails(id)
+                                .orElseThrow(() -> new ResourceNotFoundException("Venda não encontrada"));
+
+                if (venda.getStatus() == StatusVenda.CANCELADA) {
+                        throw new BadRequestException("Não é possível alterar uma venda cancelada");
+                }
+
+                Cliente cliente = clienteRepository.findById(dto.getClienteId())
+                                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
+
+                Funcionario funcionario = funcionarioRepository.findById(dto.getFuncionarioId())
+                                .orElseThrow(() -> new ResourceNotFoundException("Funcionário não encontrado"));
+
+                venda.setCliente(cliente);
+                venda.setFuncionario(funcionario);
+                venda.setCanal(dto.getCanal());
+                venda.setDesconto(dto.getDesconto());
+                venda.setTaxaEntrega(dto.getTaxaEntrega());
+                venda.setFormaPagamento(dto.getFormaPagamento());
+
+                itemVendaRepository.deleteAll(venda.getItens());
+                venda.getItens().clear();
+
+                List<ItemVenda> novosItens = dto.getItens().stream().map(itemDTO -> {
+
+                        Produto produto = produtoRepository.findById(itemDTO.getProdutoId())
+                                        .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
+
+                        BigDecimal subtotal = itemDTO.getPrecoUnitario()
+                                        .multiply(BigDecimal.valueOf(itemDTO.getQuantidade()));
+
+                        return ItemVenda.builder()
+                                        .venda(venda)
+                                        .produto(produto)
+                                        .quantidade(itemDTO.getQuantidade())
+                                        .precoUnitario(itemDTO.getPrecoUnitario())
+                                        .custoUnitario(itemDTO.getCustoUnitario())
+                                        .subtotal(subtotal)
+                                        .build();
+
+                }).toList();
+
+                itemVendaRepository.saveAll(novosItens);
+
+                vendaRepository.save(venda);
+
+                List<ItemVendaResponseDTO> itensDTO = novosItens.stream()
+                                .map(ItemVendaResponseDTO::new)
+                                .toList();
+
+                return new VendaDetailsDTO(venda, itensDTO);
+        }
 }

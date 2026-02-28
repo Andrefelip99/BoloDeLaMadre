@@ -3,7 +3,8 @@ package com.example.BoloDeLaMadre.entities.comprasEstoque;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Id;
+
 
 import com.example.BoloDeLaMadre.entities.Ingrediente;
 

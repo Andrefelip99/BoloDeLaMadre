@@ -19,6 +19,6 @@ public class ProdutoRequestDTO {
 
     @NotNull
     private BigDecimal preco;
-    private Boolean ativo;
+    private Boolean ativo; 
 
 }
