@@ -1,11 +1,9 @@
 package com.example.BoloDeLaMadre.repositories;
 
+import com.example.BoloDeLaMadre.entities.Usuario;
+import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.example.BoloDeLaMadre.entities.Usuario;
-
-public interface UsuarioRepository extends JpaRepository<Usuario, String> {
+public interface UsuarioRepository extends JpaRepository<Usuario,String> {
     Optional<Usuario> findByUsername(String username);
 }

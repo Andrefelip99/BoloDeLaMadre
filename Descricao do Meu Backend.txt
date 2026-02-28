@@ -120,6 +120,7 @@ tem tambem os Enums dentro da pasta Enums(CanalVendas, FormaPagamento, PapelUsua
 7-ReceitaController
 
 8-VendaController (dentro da pasta vendasController)
+8- ItemVendaController (dentro da pasta vendasController)
 
 9-CompraController (dentro da pasta comprasEstoqueController)
 10-MovimentacaoEstoqueController (dentro da pasta comprasEstoqueController)

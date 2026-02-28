@@ -3,6 +3,7 @@ package com.example.BoloDeLaMadre.controllers.comprasEstoqueController;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,12 +24,14 @@ public class MovimentacaoEstoqueController {
     private final MovimentacaoEstoqueService movimentacaoEstoqueService;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @ResponseStatus(HttpStatus.CREATED)
     public MovimentacaoEstoque create(@RequestBody MovimentacaoEstoque movimentacao) {
         return movimentacaoEstoqueService.create(movimentacao);
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public List<MovimentacaoEstoque> listAll() {
         return movimentacaoEstoqueService.listAll();
     }

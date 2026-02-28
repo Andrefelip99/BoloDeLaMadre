@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,12 +30,14 @@ public class VendaController {
     private final VendaService vendaService;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @ResponseStatus(HttpStatus.CREATED)
     public VendaDetailsDTO create(@RequestBody VendaRequestDTO dto) {
         return vendaService.create(dto);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<VendaDetailsDTO> update(
             @PathVariable UUID id,
             @RequestBody VendaRequestDTO dto) {
@@ -44,18 +47,21 @@ public class VendaController {
     }
 
     @PatchMapping("/{id}/cancelar")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> cancelar(@PathVariable UUID id) {
         vendaService.cancelarVenda(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<VendaDetailsDTO> getById(@PathVariable UUID id) {
         VendaDetailsDTO venda = vendaService.getById(id);
         return ResponseEntity.ok(venda);
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public ResponseEntity<List<VendaDetailsDTO>> listAll() {
         List<VendaDetailsDTO> vendas = vendaService.listAll();
         return ResponseEntity.ok(vendas);

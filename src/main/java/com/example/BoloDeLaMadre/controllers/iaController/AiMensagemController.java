@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.BoloDeLaMadre.dto.iaDto.AiMensagemRequestDTO;
@@ -20,6 +21,7 @@ public class AiMensagemController {
     private final AiMensagemService aiMensagemService;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public ResponseEntity<AiMensagemResponseDTO> create(
             @RequestBody AiMensagemRequestDTO dto) {
 
@@ -28,6 +30,7 @@ public class AiMensagemController {
     }
 
     @GetMapping("/conversa/{conversaId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public ResponseEntity<List<AiMensagemResponseDTO>> listByConversa(
             @PathVariable UUID conversaId) {
 

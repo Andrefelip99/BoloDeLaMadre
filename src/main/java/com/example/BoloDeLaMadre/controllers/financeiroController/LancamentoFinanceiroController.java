@@ -4,6 +4,7 @@ import java.time.YearMonth;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.BoloDeLaMadre.dto.financeiroDto.LancamentoFinanceiroRequestDTO;
@@ -21,12 +22,14 @@ public class LancamentoFinanceiroController {
     private final LancamentoFinanceiroService lancamentoService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     public LancamentoFinanceiroResponseDTO create(@RequestBody LancamentoFinanceiroRequestDTO dto) {
         return lancamentoService.create(dto);
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<LancamentoFinanceiroResponseDTO> listAll(
             @RequestParam(required = false) Integer mes,
             @RequestParam(required = false) Integer ano) {
@@ -39,6 +42,7 @@ public class LancamentoFinanceiroController {
     }
 
     @GetMapping("/resumo")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResumoFinanceiroDTO resumo(
             @RequestParam(required = false) Integer mes,
             @RequestParam(required = false) Integer ano) {

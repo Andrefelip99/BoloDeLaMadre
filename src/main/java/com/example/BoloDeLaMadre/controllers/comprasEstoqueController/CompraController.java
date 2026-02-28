@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.BoloDeLaMadre.dto.comprasEstoqueDto.CompraRequestDTO;
@@ -20,17 +21,20 @@ public class CompraController {
     private final CompraService compraService;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @ResponseStatus(HttpStatus.CREATED)
     public CompraWithItemsDTO create(@RequestBody CompraRequestDTO dto) {
         return compraService.create(dto);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public CompraWithItemsDTO getById(@PathVariable UUID id) {
         return compraService.getById(id);
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public List<CompraWithItemsDTO> listAll() {
         return compraService.listAll();
     }

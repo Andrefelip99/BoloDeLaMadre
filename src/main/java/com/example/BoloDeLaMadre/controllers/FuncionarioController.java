@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,34 +31,40 @@ public class FuncionarioController {
    
 
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     public Funcionario create(@RequestBody Funcionario funcionario) {
         return funcionarioService.create(funcionario);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Funcionario update(@PathVariable UUID id,
             @RequestBody Funcionario funcionario) {
         return funcionarioService.update(id, funcionario);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) {
         funcionarioService.delete(id);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Funcionario getById(@PathVariable UUID id) {
         return funcionarioService.getById(id);
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<Funcionario> listAll() {
         return funcionarioService.listAll();
     }
 
     @PutMapping("/{id}/alterar-senha")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> alterarSenha(@PathVariable UUID id, @RequestBody AlterarSenhaDTO dto) {
         funcionarioService.alterarSenha(id, dto);
         return ResponseEntity.ok("Senha alterada com sucesso");

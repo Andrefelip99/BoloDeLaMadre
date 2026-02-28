@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.BoloDeLaMadre.dto.iaDto.AiMensagemResponseDTO;
@@ -20,22 +21,26 @@ public class AiConversaController {
     private final AiConversaService service;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @ResponseStatus(HttpStatus.CREATED)
     public AiConversa create(@RequestParam String titulo) {
         return service.create(titulo);
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public List<AiConversa> list() {
         return service.list();
     }
 
     @GetMapping("/{id}/mensagens")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public List<AiMensagemResponseDTO> listMensagens(@PathVariable UUID id) {
         return service.listMensagens(id);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) {
         service.delete(id);

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.BoloDeLaMadre.dto.vendasDto.ItemVendaRequestDTO;
@@ -20,12 +21,14 @@ public class ItemVendaController {
     private final ItemVendaService itemVendaService;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @ResponseStatus(HttpStatus.CREATED)
     public ItemVendaResponseDTO create(@RequestBody ItemVendaRequestDTO dto) {
         return itemVendaService.create(dto);
     }
 
     @GetMapping("/venda/{vendaId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public List<ItemVendaResponseDTO> listByVenda(@PathVariable UUID vendaId) {
         return itemVendaService.listByVenda(vendaId);
     }
