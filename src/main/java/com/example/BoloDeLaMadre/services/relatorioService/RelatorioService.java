@@ -43,7 +43,8 @@ public class RelatorioService {
         return dto;
     }
 
-    private BigDecimal somarPorTipo(List<LancamentoFinanceiro> lancamentos, TipoFinanceiro tipo) {
+    @SuppressWarnings("null")
+private BigDecimal somarPorTipo(List<LancamentoFinanceiro> lancamentos, TipoFinanceiro tipo) {
         return lancamentos.stream()
                 .filter(l -> l.getTipo() == tipo)
                 .map(LancamentoFinanceiro::getValor)
@@ -80,7 +81,8 @@ public class RelatorioService {
         return dto;
     }
 
-    private BigDecimal somarVendasPorMes(List<Venda> vendas, YearMonth mes) {
+    @SuppressWarnings("null")
+private BigDecimal somarVendasPorMes(List<Venda> vendas, YearMonth mes) {
         return vendas.stream()
                 .filter(v -> YearMonth.from(v.getDataVenda()).equals(mes))
                 .map(Venda::getTotal)

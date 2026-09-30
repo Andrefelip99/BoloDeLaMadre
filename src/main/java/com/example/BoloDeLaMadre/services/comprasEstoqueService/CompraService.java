@@ -27,7 +27,8 @@ public class CompraService {
     private final ItemCompraService itemCompraService;
     private final FornecedorRepository fornecedorRepository;
 
-    @Transactional
+    @SuppressWarnings("null")
+@Transactional
     public CompraWithItemsDTO create(CompraRequestDTO dto) {
         Fornecedor fornecedor = fornecedorRepository.findById(dto.getFornecedorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Fornecedor não encontrado"));

@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import com.example.BoloDeLaMadre.dto.iaDto.AiMensagemRequestDTO;
 import com.example.BoloDeLaMadre.dto.iaDto.AiMensagemResponseDTO;
@@ -23,7 +24,7 @@ public class AiMensagemController {
     @PostMapping
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public ResponseEntity<AiMensagemResponseDTO> create(
-            @RequestBody AiMensagemRequestDTO dto) {
+            @Valid @RequestBody AiMensagemRequestDTO dto) {
 
         AiMensagemResponseDTO response = aiMensagemService.create(dto);
         return ResponseEntity.ok(response);
