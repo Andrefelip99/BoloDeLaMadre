@@ -151,7 +151,7 @@ public class BusinessContextService {
     }
 
     private List<Venda> nonCancelledSales(YearMonth period) {
-        return vendaRepository.findByMesEAno(period.getMonthValue(), period.getYear()).stream()
+        return vendaRepository.findByPeriodo(period.atDay(1).atStartOfDay(), period.plusMonths(1).atDay(1).atStartOfDay()).stream()
                 .filter(sale -> sale.getStatus() != StatusVenda.CANCELADA).toList();
     }
 

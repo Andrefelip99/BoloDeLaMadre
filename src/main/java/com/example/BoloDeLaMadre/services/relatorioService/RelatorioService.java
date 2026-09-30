@@ -58,11 +58,13 @@ private BigDecimal somarPorTipo(List<LancamentoFinanceiro> lancamentos, TipoFina
         YearMonth mesAnterior = mesAtual.minusMonths(1);
         var vendas = vendaRepository.findAll();
 
-        BigDecimal receitaMes = vendaRepository.sumTotalByMesEAno(mesAtual.getMonthValue(), mesAtual.getYear());
+        BigDecimal receitaMes = vendaRepository.sumTotalByPeriodo(
+                mesAtual.atDay(1).atStartOfDay(), mesAtual.plusMonths(1).atDay(1).atStartOfDay());
+        receitaMes = receitaMes != null ? receitaMes : BigDecimal.ZERO;
         BigDecimal receitaMesAnterior = somarVendasPorMes(vendas, mesAnterior);
 
         long quantidadeVendas = vendas.stream()
-                .filter(v -> YearMonth.from(v.getDataVenda()).equals(mesAtual))
+                .filter(v -> v.getDataVenda() != null && YearMonth.from(v.getDataVenda()).equals(mesAtual))
                 .count();
 
         BigDecimal ticketMedio = quantidadeVendas == 0
@@ -84,8 +86,8 @@ private BigDecimal somarPorTipo(List<LancamentoFinanceiro> lancamentos, TipoFina
     @SuppressWarnings("null")
 private BigDecimal somarVendasPorMes(List<Venda> vendas, YearMonth mes) {
         return vendas.stream()
-                .filter(v -> YearMonth.from(v.getDataVenda()).equals(mes))
-                .map(Venda::getTotal)
+                .filter(v -> v.getDataVenda() != null && YearMonth.from(v.getDataVenda()).equals(mes))
+                .map(v -> v.getTotal() == null ? BigDecimal.ZERO : v.getTotal())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 

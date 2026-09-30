@@ -49,20 +49,20 @@ public class LancamentoFinanceiroService {
 
     public List<LancamentoFinanceiroResponseDTO> listByMesEAno(YearMonth periodo) {
         return lancamentoRepository
-                .findByMesEAno(periodo.getMonthValue(), periodo.getYear())
+                .findByPeriodo(periodo.atDay(1), periodo.plusMonths(1).atDay(1))
                 .stream()
                 .map(LancamentoFinanceiroResponseDTO::new)
                 .collect(Collectors.toList());
     }
 
     public ResumoFinanceiroDTO resumo(YearMonth periodo) {
-        int mes = periodo.getMonthValue();
-        int ano = periodo.getYear();
+        var inicio = periodo.atDay(1);
+        var fim = periodo.plusMonths(1).atDay(1);
 
         BigDecimal totalReceitas = 
-                lancamentoRepository.sumByTipoAndMesEAno(TipoFinanceiro.RECEITA, mes, ano);
+                lancamentoRepository.sumByTipoAndPeriodo(TipoFinanceiro.RECEITA, inicio, fim);
         BigDecimal totalDespesas = 
-                lancamentoRepository.sumByTipoAndMesEAno(TipoFinanceiro.DESPESA, mes, ano);
+                lancamentoRepository.sumByTipoAndPeriodo(TipoFinanceiro.DESPESA, inicio, fim);
 
         totalReceitas = totalReceitas != null ? totalReceitas : BigDecimal.ZERO;
         totalDespesas = totalDespesas != null ? totalDespesas : BigDecimal.ZERO;

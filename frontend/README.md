@@ -9,11 +9,11 @@ npm install
 npm run dev
 ```
 
-Para gerar a versão de produção: `npm run build`. O diretório publicado é `dist/`. O arquivo `.env.example` mostra a configuração de URL; não coloque chaves privadas ou credenciais de banco no frontend.
+Para gerar a versão de produção: `npm run build`. O diretório publicado é `dist/`. Em desenvolvimento, o Vite encaminha `/api` ao Render como proxy de mesma origem para evitar o preflight CORS no navegador. Em produção, configure `VITE_API_URL` para a URL pública da API; o host de publicação do frontend também precisa estar liberado no CORS do backend. O arquivo `.env.example` mostra essa configuração; não coloque chaves privadas ou credenciais de banco no frontend.
 
 ## Autenticação e limites da API atual
 
-O código Spring disponível configura HTTP Basic e form login. Não há endpoint de login que gere JWT nem endpoint que informe o usuário autenticado. Por isso, o frontend valida as credenciais usando uma requisição GET não mutável a `/api/usuarios` (401 indica credenciais inválidas; 405 indica que o GET não existe, mas a autenticação passou) e mantém o cabeçalho Basic em `sessionStorage` até fechar a aba ou sair.
+O código Spring disponível configura HTTP Basic e form login. Não há endpoint de login que gere JWT nem endpoint que informe o usuário autenticado. Por isso, o frontend valida as credenciais usando a requisição somente leitura `GET /api/produtos` (200 indica autenticação aceita, 401 indica credenciais inválidas) e mantém o cabeçalho Basic em `sessionStorage` até fechar a aba ou sair. `/api/usuarios` possui apenas POST; usá-lo com GET provoca erro no backend.
 
 Como a API não oferece endpoint de perfil, o login `admin` é tratado como ADMIN; outros logins ficam no ambiente de menor privilégio USER. Esse fallback atende às contas de demonstração, mas uma API real deve expor um endpoint autenticado de perfil para classificar usuários sem inferência pelo nome.
 

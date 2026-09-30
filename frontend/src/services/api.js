@@ -2,7 +2,7 @@ import axios from 'axios'
 import { clearSession, readSession } from './session'
 
 export const api = axios.create({
-  baseURL: (import.meta.env.VITE_API_URL || 'https://bolodelamadre.onrender.com').replace(/\/$/, ''),
+  baseURL: (import.meta.env.DEV ? '' : (import.meta.env.VITE_API_URL || 'https://bolodelamadre.onrender.com')).replace(/\/$/, ''),
   timeout: 150000,
   headers: { Accept: 'application/json' },
 })
@@ -23,7 +23,7 @@ api.interceptors.response.use((response) => response, (error) => {
 
 export function friendlyError(error) {
   if (error?.code === 'ECONNABORTED') return 'O servidor demorou mais que o esperado. O primeiro acesso pode levar cerca de 2 minutos; tente novamente.'
-  if (!error?.response) return 'Não foi possível conectar ao backend. Verifique a conexão e a configuração CORS do servidor.'
+  if (!error?.response) return 'Não foi possível conectar ao backend. Verifique a rede e a URL da API; em produção, o backend também precisa liberar CORS para o domínio do frontend.'
   const { status, data } = error.response
   const message = typeof data === 'string' ? data : data?.message
   if (status === 400) return message || 'Confira os dados informados.'
@@ -56,11 +56,10 @@ export const endpoints = {
 
 export async function verifyCredentials(username, password) {
   const basic = btoa(`${username}:${password}`)
-  // This endpoint is protected but has no GET mapping. 405 means Basic auth passed;
-  // a 401 means invalid credentials, without creating or modifying any resource.
-  const response = await axios.get(`${api.defaults.baseURL}/api/usuarios`, {
+  // A read-only endpoint available to both roles verifies Basic auth without changing data.
+  const response = await axios.get(`${api.defaults.baseURL}/api/produtos`, {
     headers: { Authorization: `Basic ${basic}` }, timeout: 150000,
-    validateStatus: (status) => status === 405 || status === 401,
+    validateStatus: (status) => status === 200 || status === 401,
   })
   if (response.status === 401) throw { response: { status: 401 } }
   // Keep unknown accounts in the least privileged environment: no profile endpoint exists.
