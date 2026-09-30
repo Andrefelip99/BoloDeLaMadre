@@ -2,7 +2,9 @@ package com.example.BoloDeLaMadre.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +14,8 @@ import com.example.BoloDeLaMadre.dto.UsuarioRequestDTO;
 import com.example.BoloDeLaMadre.entities.Usuario;
 import com.example.BoloDeLaMadre.services.UsuarioService;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/usuarios")
 public class UsuarioController {
@@ -19,6 +23,19 @@ public class UsuarioController {
 
     public UsuarioController(UsuarioService service) {
         this.service = service;
+    }
+
+    @GetMapping("/me")
+    @PreAuthorize("isAuthenticated()")
+    public Map<String, String> currentUser(Authentication authentication) {
+        String role = authentication.getAuthorities().stream()
+                .map(authority -> authority.getAuthority())
+                .filter(authority -> authority.startsWith("ROLE_"))
+                .map(authority -> authority.substring("ROLE_".length()))
+                .findFirst()
+                .orElse("USER");
+
+        return Map.of("username", authentication.getName(), "role", role);
     }
 
     @PostMapping

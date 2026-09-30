@@ -22,7 +22,7 @@ public class CategoriaController {
     private final CategoriaService categoriaService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     public CategoriaResponseDTO create(@Valid @RequestBody CategoriaRequestDTO dto) {
         return categoriaService.create(dto);

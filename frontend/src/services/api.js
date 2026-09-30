@@ -56,12 +56,15 @@ export const endpoints = {
 
 export async function verifyCredentials(username, password) {
   const basic = btoa(`${username}:${password}`)
-  // A read-only endpoint available to both roles verifies Basic auth without changing data.
-  const response = await axios.get(`${api.defaults.baseURL}/api/produtos`, {
+  // Ask the backend for the authenticated user's actual role; never infer it from the login name.
+  const response = await axios.get(`${api.defaults.baseURL}/api/usuarios/me`, {
     headers: { Authorization: `Basic ${basic}` }, timeout: 150000,
     validateStatus: (status) => status === 200 || status === 401,
   })
   if (response.status === 401) throw { response: { status: 401 } }
-  // Keep unknown accounts in the least privileged environment: no profile endpoint exists.
-  return { basic, username, role: username.toLowerCase() === 'admin' ? 'ADMIN' : 'USER' }
+  return {
+    basic,
+    username: response.data?.username || username,
+    role: response.data?.role === 'ADMIN' ? 'ADMIN' : 'USER',
+  }
 }

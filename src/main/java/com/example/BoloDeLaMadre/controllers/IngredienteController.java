@@ -22,7 +22,7 @@ public class IngredienteController {
     private final IngredienteService ingredienteService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     public Ingrediente create(@RequestParam String nome,
                               @RequestParam UnidadeMedida unidade,

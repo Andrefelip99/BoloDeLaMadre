@@ -21,7 +21,7 @@ public class FornecedorController {
     private final FornecedorService fornecedorService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     public Fornecedor create(@RequestBody Fornecedor fornecedor) {
         return fornecedorService.create(fornecedor);

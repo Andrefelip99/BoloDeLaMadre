@@ -21,7 +21,7 @@ public class ReceitaController {
     private final ReceitaService receitaService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     public Receita create(
             @RequestParam UUID produtoId,
