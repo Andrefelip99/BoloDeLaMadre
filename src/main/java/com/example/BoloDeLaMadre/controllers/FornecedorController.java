@@ -21,35 +21,35 @@ public class FornecedorController {
     private final FornecedorService fornecedorService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @ResponseStatus(HttpStatus.CREATED)
     public Fornecedor create(@RequestBody Fornecedor fornecedor) {
         return fornecedorService.create(fornecedor);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Fornecedor update(@PathVariable UUID id,
                              @RequestBody Fornecedor fornecedor) {
         return fornecedorService.update(id, fornecedor);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         fornecedorService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Fornecedor> getById(@PathVariable UUID id) {
         Fornecedor fornecedor = fornecedorService.getById(id);
         return ResponseEntity.ok(fornecedor);
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<List<Fornecedor>> listAll() {
         List<Fornecedor> fornecedores = fornecedorService.listAll();
         return ResponseEntity.ok(fornecedores);

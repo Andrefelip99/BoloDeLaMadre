@@ -30,14 +30,14 @@ public class VendaController {
     private final VendaService vendaService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @ResponseStatus(HttpStatus.CREATED)
     public VendaDetailsDTO create(@RequestBody VendaRequestDTO dto) {
         return vendaService.create(dto);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<VendaDetailsDTO> update(
             @PathVariable UUID id,
             @RequestBody VendaRequestDTO dto) {
@@ -47,21 +47,21 @@ public class VendaController {
     }
 
     @PatchMapping("/{id}/cancelar")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> cancelar(@PathVariable UUID id) {
         vendaService.cancelarVenda(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<VendaDetailsDTO> getById(@PathVariable UUID id) {
         VendaDetailsDTO venda = vendaService.getById(id);
         return ResponseEntity.ok(venda);
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<List<VendaDetailsDTO>> listAll() {
         List<VendaDetailsDTO> vendas = vendaService.listAll();
         return ResponseEntity.ok(vendas);

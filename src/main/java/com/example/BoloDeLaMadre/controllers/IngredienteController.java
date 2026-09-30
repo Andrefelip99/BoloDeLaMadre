@@ -22,7 +22,7 @@ public class IngredienteController {
     private final IngredienteService ingredienteService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @ResponseStatus(HttpStatus.CREATED)
     public Ingrediente create(@RequestParam String nome,
                               @RequestParam UnidadeMedida unidade,
@@ -42,7 +42,7 @@ public class IngredienteController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Ingrediente update(@PathVariable UUID id,
                               @RequestParam String nome,
                               @RequestParam UnidadeMedida unidade,
@@ -63,20 +63,20 @@ public class IngredienteController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) {
         ingredienteService.delete(id);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Ingrediente getById(@PathVariable UUID id) {
         return ingredienteService.getById(id);
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public List<Ingrediente> listAll() {
         return ingredienteService.listAll();
     }

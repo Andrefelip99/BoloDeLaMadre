@@ -22,7 +22,7 @@ public class RelatorioController {
     private final RelatorioService relatorioService;
 
     @GetMapping("/dre")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<DreDataDTO> getDre(
             @RequestParam(required = false) Integer mes,
             @RequestParam(required = false) Integer ano) {
@@ -33,7 +33,7 @@ public class RelatorioController {
     }
 
     @GetMapping("/kpis")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<KpiDataDTO> getKpis(
             @RequestParam(required = false) Integer mes,
             @RequestParam(required = false) Integer ano) {
@@ -44,7 +44,7 @@ public class RelatorioController {
     }
 
     @GetMapping("/insights")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<List<AiInsightDTO>> getInsights(
             @RequestParam(required = false) Integer mes,
             @RequestParam(required = false) Integer ano) {

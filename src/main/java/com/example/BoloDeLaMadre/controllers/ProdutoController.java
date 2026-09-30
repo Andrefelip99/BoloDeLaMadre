@@ -31,7 +31,7 @@ public class ProdutoController {
     private final ProdutoService produtoService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     public ProdutoResponseDTO create(@RequestBody @Valid ProdutoRequestDTO dto) {
 
@@ -41,7 +41,7 @@ public class ProdutoController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ProdutoResponseDTO update(@PathVariable UUID id,
                                      @RequestBody @Valid ProdutoRequestDTO dto) {
 
@@ -51,20 +51,20 @@ public class ProdutoController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) {
         produtoService.delete(id);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ProdutoResponseDTO getById(@PathVariable UUID id) {
         return new ProdutoResponseDTO(produtoService.getById(id));
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public List<ProdutoResponseDTO> listAll() {
         return produtoService.listAll()
                 .stream()

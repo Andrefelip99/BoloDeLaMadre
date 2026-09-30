@@ -31,40 +31,40 @@ public class FuncionarioController {
    
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     public Funcionario create(@RequestBody Funcionario funcionario) {
         return funcionarioService.create(funcionario);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Funcionario update(@PathVariable UUID id,
             @RequestBody Funcionario funcionario) {
         return funcionarioService.update(id, funcionario);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) {
         funcionarioService.delete(id);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Funcionario getById(@PathVariable UUID id) {
         return funcionarioService.getById(id);
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Funcionario> listAll() {
         return funcionarioService.listAll();
     }
 
     @PutMapping("/{id}/alterar-senha")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> alterarSenha(@PathVariable UUID id, @RequestBody AlterarSenhaDTO dto) {
         funcionarioService.alterarSenha(id, dto);
         return ResponseEntity.ok("Senha alterada com sucesso");

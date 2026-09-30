@@ -21,14 +21,14 @@ public class ItemVendaController {
     private final ItemVendaService itemVendaService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @ResponseStatus(HttpStatus.CREATED)
     public ItemVendaResponseDTO create(@RequestBody ItemVendaRequestDTO dto) {
         return itemVendaService.create(dto);
     }
 
     @GetMapping("/venda/{vendaId}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public List<ItemVendaResponseDTO> listByVenda(@PathVariable UUID vendaId) {
         return itemVendaService.listByVenda(vendaId);
     }

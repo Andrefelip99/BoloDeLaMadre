@@ -24,14 +24,14 @@ public class MovimentacaoEstoqueController {
     private final MovimentacaoEstoqueService movimentacaoEstoqueService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @ResponseStatus(HttpStatus.CREATED)
     public MovimentacaoEstoque create(@RequestBody MovimentacaoEstoque movimentacao) {
         return movimentacaoEstoqueService.create(movimentacao);
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public List<MovimentacaoEstoque> listAll() {
         return movimentacaoEstoqueService.listAll();
     }

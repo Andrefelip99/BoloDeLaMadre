@@ -21,20 +21,20 @@ public class CompraController {
     private final CompraService compraService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @ResponseStatus(HttpStatus.CREATED)
     public CompraWithItemsDTO create(@RequestBody CompraRequestDTO dto) {
         return compraService.create(dto);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public CompraWithItemsDTO getById(@PathVariable UUID id) {
         return compraService.getById(id);
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public List<CompraWithItemsDTO> listAll() {
         return compraService.listAll();
     }

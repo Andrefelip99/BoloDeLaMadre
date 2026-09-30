@@ -21,7 +21,7 @@ public class ReceitaController {
     private final ReceitaService receitaService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @ResponseStatus(HttpStatus.CREATED)
     public Receita create(
             @RequestParam UUID produtoId,
@@ -33,7 +33,7 @@ public class ReceitaController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Receita update(
             @PathVariable UUID id,
             @RequestParam UUID produtoId,
@@ -45,20 +45,20 @@ public class ReceitaController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) {
         receitaService.delete(id);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Receita getById(@PathVariable UUID id) {
         return receitaService.getByIdWithProdutoAndIngrediente(id);
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public List<Receita> listAll() {
         return receitaService.listAllWithProdutoAndIngrediente();
     }
