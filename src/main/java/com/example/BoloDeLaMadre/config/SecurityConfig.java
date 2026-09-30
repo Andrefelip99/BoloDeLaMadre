@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -32,6 +33,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf
                 .ignoringRequestMatchers("/h2-console/**")
+                .ignoringRequestMatchers("/api/**")
             )
             .headers(headers -> headers
                 .frameOptions(frame -> frame.sameOrigin())  
@@ -41,8 +43,11 @@ public class SecurityConfig {
                 .requestMatchers("/api/**").authenticated()
                 .anyRequest().permitAll()
             )
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
             .userDetailsService(userDetailsService)
-            .formLogin(withDefaults())          
+            .formLogin(form -> form.disable())
             .httpBasic(withDefaults());
 
         return http.build();
