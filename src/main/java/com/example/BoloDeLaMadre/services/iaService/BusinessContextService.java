@@ -55,6 +55,7 @@ public class BusinessContextService {
         return monthlySalesContext(selectPeriod(question, normalized));
     }
 
+    @SuppressWarnings("null")
     private String monthlySalesContext(YearMonth period) {
         List<Venda> sales = nonCancelledSales(period);
         BigDecimal revenue = sales.stream().map(this::recordedSaleValue).reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -75,6 +76,7 @@ public class BusinessContextService {
     }
 
     private String inventoryContext() {
+        @SuppressWarnings("null")
         List<Ingrediente> ingredients = ingredienteRepository.findAll().stream()
                 .filter(item -> Boolean.TRUE.equals(item.getAtivo()))
                 .sorted(Comparator.comparing(Ingrediente::getNome, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)))
@@ -91,6 +93,7 @@ public class BusinessContextService {
         return "Estoque atual cadastrado (quantidades não convertidas):\n" + rows;
     }
 
+    @SuppressWarnings("null")
     private String productionContext(String question, String normalized) {
         List<Receita> recipes = receitaRepository.findAllWithProdutoAndIngrediente().stream()
                 .filter(recipe -> Boolean.TRUE.equals(recipe.getAtivo()))
@@ -155,6 +158,7 @@ public class BusinessContextService {
                 .filter(sale -> sale.getStatus() != StatusVenda.CANCELADA).toList();
     }
 
+    @SuppressWarnings("null")
     private BigDecimal recordedSaleValue(Venda sale) {
         if (sale.getTotal() != null) {
             return sale.getTotal();

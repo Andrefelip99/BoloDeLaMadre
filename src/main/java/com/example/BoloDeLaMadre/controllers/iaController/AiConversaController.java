@@ -21,26 +21,26 @@ public class AiConversaController {
     private final AiConversaService service;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @ResponseStatus(HttpStatus.CREATED)
     public AiConversa create(@RequestParam String titulo) {
         return service.create(titulo);
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public List<AiConversa> list() {
         return service.list();
     }
 
     @GetMapping("/{id}/mensagens")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public List<AiMensagemResponseDTO> listMensagens(@PathVariable UUID id) {
         return service.listMensagens(id);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) {
         service.delete(id);

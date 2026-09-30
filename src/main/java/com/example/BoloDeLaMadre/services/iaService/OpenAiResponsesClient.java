@@ -79,6 +79,7 @@ public class OpenAiResponsesClient {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private String extractOutputText(JsonNode response) {
         if (response == null || !response.has("output")) {
             return null;

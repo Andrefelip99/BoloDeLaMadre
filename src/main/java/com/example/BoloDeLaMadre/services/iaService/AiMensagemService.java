@@ -49,6 +49,7 @@ public class AiMensagemService {
         aiMensagemRepository.save(userMessage);
 
         List<AiMensagem> history = aiMensagemRepository.findByConversaIdWithConversa(dto.getConversaId());
+        @SuppressWarnings("null")
         List<AiMensagem> conversationHistory = history.stream()
                 .filter(message -> ("user".equals(message.getRole()) || "assistant".equals(message.getRole()))
                         && message.getContent() != null)
@@ -73,7 +74,8 @@ public class AiMensagemService {
         return new AiMensagemResponseDTO(assistantMessage);
     }
 
-    public List<AiMensagemResponseDTO> listByConversa(UUID conversaId) {
+    @SuppressWarnings("null")
+public List<AiMensagemResponseDTO> listByConversa(UUID conversaId) {
         return aiMensagemRepository.findByConversaIdWithConversa(conversaId).stream()
                 .sorted(Comparator.comparing(AiMensagem::getCreatedAt,
                         Comparator.nullsLast(Comparator.naturalOrder())))

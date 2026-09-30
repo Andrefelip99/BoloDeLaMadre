@@ -22,7 +22,7 @@ public class AiMensagemController {
     private final AiMensagemService aiMensagemService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<AiMensagemResponseDTO> create(
             @Valid @RequestBody AiMensagemRequestDTO dto) {
 
@@ -31,7 +31,7 @@ public class AiMensagemController {
     }
 
     @GetMapping("/conversa/{conversaId}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<List<AiMensagemResponseDTO>> listByConversa(
             @PathVariable UUID conversaId) {
 
