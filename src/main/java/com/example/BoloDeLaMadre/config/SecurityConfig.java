@@ -34,8 +34,8 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(java.util.List.of(
-                "https://bdlm.vercel.app",
-                "https://bdlm.vercel.app/login",
+                "https://front-bdlm.vercel.app/login",
+                "https://front-bdlm.vercel.app",
                 "http://localhost:3000"));
         configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(java.util.List.of("Authorization", "Content-Type", "Accept"));
