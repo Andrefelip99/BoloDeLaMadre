@@ -5,6 +5,8 @@ import java.util.Map;
 import java.net.http.HttpClient;
 import java.time.Duration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -12,11 +14,13 @@ import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
 
 import tools.jackson.databind.JsonNode;
 
 @Component
 public class OpenAiResponsesClient {
+    private static final Logger log = LoggerFactory.getLogger(OpenAiResponsesClient.class);
     private static final String RESPONSES_ENDPOINT = "https://api.openai.com/v1/responses";
     private static final String UNAVAILABLE_MESSAGE = "O assistente de IA está indisponível no momento.";
 
@@ -74,7 +78,13 @@ public class OpenAiResponsesClient {
             return text.strip();
         } catch (AssistantUnavailableException ex) {
             throw ex;
+        } catch (RestClientResponseException ex) {
+            log.warn("OpenAI Responses API respondeu HTTP {} ({})",
+                    ex.getStatusCode().value(), ex.getStatusText());
+            throw new AssistantUnavailableException(UNAVAILABLE_MESSAGE, ex);
         } catch (RestClientException ex) {
+            log.warn("Falha de comunicação com OpenAI Responses API ({})",
+                    ex.getClass().getSimpleName());
             throw new AssistantUnavailableException(UNAVAILABLE_MESSAGE, ex);
         }
     }
