@@ -73,6 +73,10 @@ public class OpenAiResponsesClient {
 
             String text = extractOutputText(response);
             if (text == null || text.isBlank()) {
+                String responseStatus = response == null ? "sem resposta" : response.path("status").asText("desconhecido");
+                String incompleteReason = response == null ? "" : response.path("incomplete_details").path("reason").asText("");
+                log.warn("OpenAI Responses API retornou sem texto. status={}, incompleteReason={}",
+                        responseStatus, incompleteReason);
                 throw new AssistantUnavailableException(UNAVAILABLE_MESSAGE);
             }
             return text.strip();
