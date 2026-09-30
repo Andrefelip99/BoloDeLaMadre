@@ -19,7 +19,7 @@ A aplicação permite o gerenciamento de produtos, vendas, compras, despesas, fl
 * Spring Data JPA
 * Hibernate
 * PostgreSQL
-* OpenAI Responses API (modelo padrão: gpt-4.1-mini)
+* Assistente de gestão por opções e respostas determinísticas
 * Maven
 * Lombok
 * Testes de integração e unitarios
@@ -121,50 +121,13 @@ Monitoramento dos resultados financeiros.
 
 Consolidação dos indicadores financeiros.
 
-### Assistente de gestão com IA
+### Assistente de gestão
 
-O assistente usa a OpenAI Responses API para interpretar perguntas em português e responder com base em informações consultadas pelo backend. As conversas e as mensagens do usuário e do assistente ficam registradas no banco de dados da aplicação.
+O assistente funciona por opções e respostas automáticas calculadas pelo backend, sem chamar um modelo externo ou exigir chave de API. As conversas e mensagens continuam salvas no banco de dados.
 
-Ele pode ajudar com:
+As opções disponíveis consultam o resumo de vendas do mês, produtos mais vendidos, estoque atual, ingredientes abaixo do mínimo, sugestões baseadas no histórico e estimativas de ingredientes para um produto e quantidade escolhidos. As estimativas usam as quantidades cadastradas na receita sem converter unidades nem calcular perdas; as sugestões não consideram margem ou demanda futura.
 
-* Consultas e resumos de vendas por mês, comparando com o mês anterior.
-* Consulta de ingredientes ativos e alerta de estoque abaixo do mínimo.
-* Estimativa de ingredientes para produzir uma quantidade informada de um produto com receita cadastrada.
-* Sugestões de produtos com base nos itens vendidos no período.
-
-As estimativas usam as quantidades e unidades da receita, sem conversão de unidades ou cálculo de perdas. Sugestões baseadas em vendas não consideram margem de lucro, capacidade de produção ou demanda futura. Quando uma venda não tem total preenchido, o resumo usa a soma dos subtotais dos itens e não inclui descontos nem taxas.
-
-O modelo não pode alterar vendas, produtos ou estoque. O backend consulta os dados necessários e envia à OpenAI apenas a pergunta, até 12 mensagens recentes da conversa e o contexto relacionado. A chamada usa `store: false`; as conversas continuam salvas no banco da aplicação.
-
-#### Configurar a chave da OpenAI
-
-Defina a chave no ambiente em que o backend será iniciado. No PowerShell:
-
-```powershell
-$env:OPENAI_API_KEY = "sua-chave"
-$env:OPENAI_MODEL = "gpt-4.1-mini"
-mvn spring-boot:run
-```
-
-`OPENAI_MODEL` é opcional; o padrão é `gpt-4.1-mini`. Não salve a chave no código nem no Git. Sem `OPENAI_API_KEY`, a aplicação inicia normalmente, mas o envio de mensagens do assistente retorna HTTP 503 informando que falta configuração.
-
-#### Usar o assistente
-
-Os endpoints exigem autenticação pelo Spring Security configurado na aplicação.
-
-1. Crie uma conversa com `POST /api/ai-conversas?titulo=Resumo%20do%20negocio` e guarde o `id` retornado.
-2. Envie uma pergunta para `POST /api/ia/mensagens`:
-
-```json
-{
-  "conversaId": "UUID-DA-CONVERSA",
-  "content": "Como foi o desempenho em 2025-04?"
-}
-```
-
-3. Consulte o histórico em `GET /api/ia/mensagens/conversa/{conversaId}`.
-
-Mais exemplos e limites estão em [docs/assistente-ia.md](docs/assistente-ia.md).
+As rotas de conversa continuam protegidas pela autenticação existente. Detalhes em [docs/assistente-ia.md](docs/assistente-ia.md).
 
 ### Usuários
 

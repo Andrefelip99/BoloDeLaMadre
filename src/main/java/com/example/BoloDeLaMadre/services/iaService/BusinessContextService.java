@@ -47,12 +47,26 @@ public class BusinessContextService {
             return productionContext(question, normalized);
         }
         if (containsAny(normalized, "estoque", "ingrediente", "repor", "abaixo", "minimo", "comprar", "falta")) {
+            if (containsAny(normalized, "baixo", "abaixo", "minimo", "repor", "falta")) {
+                return lowInventoryContext();
+            }
             return inventoryContext();
         }
         if (containsAny(normalized, "sugest", "recomend", "mais vendido", "popular", "vender")) {
             return bestSellersContext(selectPeriod(question, normalized));
         }
         return monthlySalesContext(selectPeriod(question, normalized));
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> activeProductNames() {
+        return produtoRepository.findAll().stream()
+                .filter(product -> Boolean.TRUE.equals(product.getAtivo()))
+                .map(Produto::getNome)
+                .filter(Objects::nonNull)
+                .sorted(String.CASE_INSENSITIVE_ORDER)
+                .limit(100)
+                .toList();
     }
 
     @SuppressWarnings("null")
@@ -91,6 +105,26 @@ public class BusinessContextService {
                 item.getUnidade(), belowMinimum(item) ? "abaixo do mínimo" : "dentro do mínimo"))
                 .collect(Collectors.joining("\n"));
         return "Estoque atual cadastrado (quantidades não convertidas):\n" + rows;
+    }
+
+    private String lowInventoryContext() {
+        @SuppressWarnings("null")
+        List<Ingrediente> lowIngredients = ingredienteRepository.findAll().stream()
+                .filter(item -> Boolean.TRUE.equals(item.getAtivo()))
+                .filter(this::belowMinimum)
+                .sorted(Comparator.comparing(Ingrediente::getNome,
+                        Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)))
+                .limit(100)
+                .toList();
+        if (lowIngredients.isEmpty()) {
+            return "Nenhum ingrediente ativo está abaixo do estoque mínimo cadastrado.";
+        }
+        String rows = lowIngredients.stream().map(item -> String.format(Locale.ROOT,
+                "- %s: estoque %.2f %s; mínimo %.2f %s",
+                item.getNome(), safe(item.getEstoqueAtual()), item.getUnidade(), safe(item.getEstoqueMinimo()),
+                item.getUnidade()))
+                .collect(Collectors.joining("\n"));
+        return "Ingredientes abaixo do estoque mínimo:\n" + rows;
     }
 
     @SuppressWarnings("null")

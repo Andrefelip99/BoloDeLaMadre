@@ -140,46 +140,28 @@ tem tambem os Enums dentro da pasta Enums(CanalVendas, FormaPagamento, PapelUsua
 3-GlobalExceptionHandler
 
 
-// Assistente de gestão com OpenAI (implementação atual) //
+// Assistente de gestão guiado por opções //
 
-O assistente usa a OpenAI Responses API com o modelo gpt-4.1-mini por padrão.
-O modelo interpreta a pergunta e redige a resposta; os dados de vendas, estoque e receitas
-são consultados pelo backend. O modelo não tem ferramentas para alterar dados do sistema.
+O assistente é guiado por opções fixas e responde com cálculos e consultas determinísticas do backend. Não chama provedores externos de IA, não usa chave de API e não envia dados do negócio para modelos externos. Conversas e mensagens continuam salvas no banco.
 
-Novas classes e responsabilidades:
-
-1-BusinessContextService (dentro de services/iaService)
-  - Consulta dados de vendas, ingredientes, produtos e receitas.
-  - Prepara contexto para resumo mensal, estoque, estimativa de produção e sugestão de produtos.
-  - Exclui vendas canceladas dos resumos.
-
-2-OpenAiResponsesClient (dentro de services/iaService)
-  - Envia pergunta, histórico recente e contexto para https://api.openai.com/v1/responses.
-  - Usa OPENAI_API_KEY e permite escolher o modelo com OPENAI_MODEL.
-  - Usa store=false e limites de timeout para a chamada externa.
-
-3-AssistantUnavailableException (dentro de services/iaService)
-  - Representa ausência de chave ou indisponibilidade do provedor; a API responde HTTP 503.
+BusinessContextService consulta dados de vendas, ingredientes, produtos e receitas para montar as respostas. AiMensagemService valida e persiste a opção escolhida e a resposta automática.
 
 Fluxo de envio de mensagem:
 
 1-O cliente cria uma conversa por POST /api/ai-conversas?titulo=....
-2-POST /api/ia/mensagens recebe conversaId e content.
-3-AiMensagemService valida e salva a pergunta, carrega até 12 mensagens recentes,
-  consulta BusinessContextService e envia tudo ao OpenAiResponsesClient.
-4-A resposta do modelo é salva como mensagem com role assistant e devolvida ao cliente.
+2-POST /api/ia/mensagens recebe conversaId e a opção escolhida.
+3-AiMensagemService valida e salva a escolha, consulta BusinessContextService e obtém uma resposta determinística.
+4-A resposta é salva como mensagem com role assistant e devolvida ao cliente.
 5-O histórico fica disponível em GET /api/ia/mensagens/conversa/{conversaId}.
 
-Configuração no PowerShell antes de iniciar:
+Opções disponíveis no painel:
 
-$env:OPENAI_API_KEY = "sua-chave"
-$env:OPENAI_MODEL = "gpt-4.1-mini" # opcional; esse é o modelo padrão
-mvn spring-boot:run
+- Resumo mensal de vendas e comparação com o mês anterior; vendas canceladas são excluídas.
+- Consulta de estoque atual e ingredientes abaixo do mínimo.
+- Estimativa de ingredientes para um produto ativo e quantidade selecionados.
+- Produtos mais vendidos e sugestões baseadas no histórico.
 
-Sem OPENAI_API_KEY, a aplicação inicia, mas as mensagens do assistente retornam HTTP 503.
-Não coloque a chave no código ou no Git.
-
-Funções cobertas pelo contexto enviado ao modelo:
+Funções implementadas no contexto de negócio:
 
 - Resumo mensal de vendas e comparação com o mês anterior; vendas canceladas são excluídas.
 - Consulta de estoque atual e ingredientes abaixo do mínimo.
@@ -192,7 +174,5 @@ Limites conhecidos:
 - Quando o total da venda não está preenchido, o resumo soma subtotais dos itens,
   sem considerar descontos ou taxas.
 - Sugestões não consideram margem de lucro, capacidade produtiva ou demanda futura.
-- A pergunta, o histórico recente e os dados de contexto são enviados à OpenAI.
-  store=false evita persistir o estado da resposta como estado de aplicação da API,
-  mas não significa retenção zero dos registros de monitoramento do provedor.
-- Conversas e respostas também ficam salvas no banco da aplicação.
+- As respostas seguem as opções pré-definidas; o assistente não interpreta texto livre.
+- Conversas e respostas ficam salvas no banco da aplicação.

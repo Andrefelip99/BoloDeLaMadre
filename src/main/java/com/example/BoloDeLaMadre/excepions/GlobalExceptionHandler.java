@@ -10,17 +10,11 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import com.example.BoloDeLaMadre.services.iaService.AssistantUnavailableException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-
-    @ExceptionHandler(AssistantUnavailableException.class)
-    public ResponseEntity<Map<String, Object>> handleAssistantUnavailable(AssistantUnavailableException ex) {
-        return buildResponse(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
-    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {

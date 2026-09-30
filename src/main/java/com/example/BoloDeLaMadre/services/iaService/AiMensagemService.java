@@ -3,7 +3,6 @@ package com.example.BoloDeLaMadre.services.iaService;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -23,12 +22,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AiMensagemService {
     private static final int MAX_MESSAGE_LENGTH = 4000;
-    private static final int MAX_HISTORY_MESSAGES = 12;
 
     private final AiMensagemRepository aiMensagemRepository;
     private final AiConversaRepository aiConversaRepository;
     private final BusinessContextService businessContextService;
-    private final OpenAiResponsesClient openAiResponsesClient;
 
     public AiMensagemResponseDTO create(AiMensagemRequestDTO dto) {
         if (dto.getContent() == null || dto.getContent().isBlank()) {
@@ -48,21 +45,7 @@ public class AiMensagemService {
         userMessage.setCreatedAt(LocalDateTime.now());
         aiMensagemRepository.save(userMessage);
 
-        List<AiMensagem> history = aiMensagemRepository.findByConversaIdWithConversa(dto.getConversaId());
-        @SuppressWarnings("null")
-        List<AiMensagem> conversationHistory = history.stream()
-                .filter(message -> ("user".equals(message.getRole()) || "assistant".equals(message.getRole()))
-                        && message.getContent() != null)
-                .sorted(Comparator.comparing(AiMensagem::getCreatedAt,
-                        Comparator.nullsFirst(Comparator.naturalOrder())))
-                .toList();
-        List<Map<String, String>> input = conversationHistory.stream()
-                .skip(Math.max(0, conversationHistory.size() - MAX_HISTORY_MESSAGES))
-                .map(message -> Map.of("role", message.getRole(), "content", message.getContent()))
-                .toList();
-
-        String context = businessContextService.buildContext(userMessage.getContent());
-        String answer = openAiResponsesClient.respond(context, input);
+        String answer = businessContextService.buildContext(userMessage.getContent());
 
         AiMensagem assistantMessage = new AiMensagem();
         assistantMessage.setConversa(conversa);
